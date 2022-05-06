@@ -1,0 +1,238 @@
+:root {
+  --gutters: #000000;
+  --comment: #546a90;
+  --linenumbers: #546a90;
+  --border: #7f83ff;
+  --background-primary: #161616;
+  --background-secondary: #ff4a9860;
+  --color-primary: #718ec0;
+  --color-secondary: #42c6ff;
+  --color-thirdly: #ff4a98;
+  --color-fourtly: #ffce2e;
+  --color-fiftly: #2eff85;
+  --gutters-border: 1px solid transparent;
+  --border-width: 1px;
+  --error: #ff0000;
+  --warning: #ffed2b;
+  --success: #00ff00;
+  --icons: #fbf5f3;
+  --progress: #42c6ff;
+  --def: #42c6ff;
+  --atom: #ff57b9;
+  --number: #ff4a98;
+  --string: #ffb76f;
+  --keyword: #7f83ff;
+  --font-family: 'Fira Code';
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url(assets/fonts/FiraCode-Regular.ttf) format('truetype');
+  font-display: swap;
+}
+/* 
+@font-face {
+  font-family: 'Apple';
+  src: url(assets/fonts/Apple.ttf) format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hermit-Regular';
+  src: url(assets/fonts/Hermit-Regular.otf) format('opentype');
+  font-display: swap;
+} */
+
+body {
+  background-color: var(--background-primary);
+  margin: 0;
+}
+.CodeMirror {
+  width: 100%;
+}
+#run {
+  position: absolute;
+  top: 0;
+}
+#add-button {
+  position: absolute;
+  top: 1px;
+  right: 85px;
+}
+#key {
+  position: absolute;
+  right: 55px;
+}
+#featured {
+  position: absolute;
+  right: 25px;
+}
+#help {
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  top: 0;
+  color: var(--icons);
+  background-color: transparent;
+  border: none;
+}
+
+.success_line,
+.error_line,
+.info_line,
+.warn_line {
+  position: absolute;
+  resize: vertical;
+  width: 98%;
+  z-index: 5;
+  font-family: var(--font-family);
+  font-style: normal;
+  letter-spacing: -0.05em;
+  background-color: var(--background-primary);
+  /* visibility: hidden; */
+  padding: 5px;
+  padding-inline-start: 10px;
+}
+.error_line {
+  /* border: var(--border-width) solid #ff275d; */
+  color: #ff275d;
+}
+.info_line {
+  border: var(--border-width) solid var(--comment);
+  color: var(--color-primary);
+}
+/* #main-container {
+  padding: 15px;
+} */
+#canvas-container {
+  border: 1px solid var(--border);
+  min-height: 250px;
+}
+#console {
+  outline: none;
+  border: none;
+  height: 50px;
+  width: 100%;
+  resize: none;
+  position: fixed;
+  border-top: 1px solid var(--comment);
+
+  /* pointer-events: none; */
+  bottom: 0;
+}
+.label {
+  color: var(--comment);
+  font-family: var(--font-family);
+  font-size: 10px;
+  margin-left: 1%;
+}
+.composition {
+  cursor: pointer;
+  width: 100%;
+  height: 250px;
+  border: 1px solid var(--comment);
+  min-height: 250px;
+  /* margin-bottom: 25%; */
+}
+.thumbnail {
+  max-height: 250px;
+  max-width: 100%;
+  margin: auto;
+  display: block;
+}
+.small {
+  width: 100%;
+  height: 250px;
+  position: 'auto';
+}
+.large {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  background-color: var(--background-primary);
+}
+#main-container {
+  display: none;
+  z-index: 1;
+  margin-bottom: 25%;
+}
+@keyframes fadeOutOpacity {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+#splash-screen {
+  width: 100%;
+  height: 100%;
+  overflow: none;
+  pointer-events: none;
+  background: var(--background-primary);
+  position: absolute;
+  top: 0;
+  animation-name: fadeOutOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  text-align: center;
+  z-index: 2000;
+}
+#header {
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 5px 0;
+  height: 20px;
+  background-color: var(--background-primary);
+  border-bottom: solid 1px var(--comment);
+  position: fixed;
+  z-index: 1000;
+}
+#full-run {
+  bottom: 20px;
+  right: 10px;
+  text-align: center;
+  padding: 5px;
+  background-color: transparent;
+  position: fixed;
+  z-index: 1000;
+  display: none;
+}
+
+#next {
+  text-align: center;
+  color: var(--icons);
+  position: fixed;
+  font-size: 25px;
+  width: 100%;
+  background: var(--border);
+  cursor: pointer;
+  border: none;
+  height: 0px;
+  bottom: 60px;
+}
+#run,
+#full-run,
+#add-button,
+#featured,
+#key {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+@keyframes fadeInOpacity {
+  0% {
+    width: 15%;
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    width: 15%;
+  }
+}

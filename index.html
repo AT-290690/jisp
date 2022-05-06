@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"
+    />
+    <meta
+      name="description"
+      content="Use a lisp like language to draw p5.js sketches and share them with a link."
+    />
+    <title>Hyper Light</title>
+    <style>
+      html {
+        background: 'black';
+      }
+    </style>
+    <link href="./style.css" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+    <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+  </head>
+  <body>
+    <div id="header">
+      <button id="add-button" class="header-button">
+        <img src="./assets/images/file.svg" />
+      </button>
+      <button id="key" class="header-button">
+        <img src="./assets/images/key.svg" />
+      </button>
+      <button id="featured" class="header-button">
+        <img src="./assets/images/sparckle.svg" />
+      </button>
+      <button id="run" class="header-button">
+        <img src="./assets/images/logo.svg" />
+      </button>
+      <button id="help" class="header-button">
+        <img src="./assets/images/question.svg" />
+      </button>
+    </div>
+    <div id="composition-container"></div>
+    <div id="main-container" class="small">
+      <div id="editor-container"></div>
+    </div>
+    <div id="splash-screen"></div>
+    <button id="next" class="header-button">* * *</button>
+    <textarea
+      id="console"
+      spellcheck="false"
+      autocomplete="off"
+      class="info_line"
+      defer
+    ></textarea>
+    <div style="height: 50px"></div>
+
+    <img src="./assets/images/logo.svg" id="full-run" />
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
