@@ -8,7 +8,7 @@ import {
   fullRunButton
 } from './extentions/composition.js';
 import { execute } from './commands/exec.js';
-import { newComp, run, State } from './commands/utils.js';
+import { newComp, resizer, run, State } from './commands/utils.js';
 
 helpButton.addEventListener('click', () => {
   if (State.isHelpOpen) {
@@ -33,26 +33,23 @@ editorContainer.addEventListener(
   () => (State.activeWindow = editorContainer)
 );
 
-const resize = e => {
+const resize = () => {
   if (State.isFullScreen) {
-    editor.setSize(
-      mainContainer.getBoundingClientRect().width,
-      State.canvasHeight
-        ? e.target.innerHeight -
-            State.canvasHeight / 2 -
-            (State.canvasHeight - 59)
-        : e.target.innerHeight - 62
-    );
-  } else {
-    execute({ value: '!LIVE' });
-    editor.setSize(
-      mainContainer.getBoundingClientRect().width,
-      mainContainer.getBoundingClientRect().height - 80
-    );
+    editor.setSize(mainContainer.getBoundingClientRect().width, State.height);
   }
 };
 window.addEventListener('resize', resize);
-
+resizer(
+  consoleElement,
+  e => {
+    editor.setSize(mainContainer.getBoundingClientRect().width, e.pageY);
+    State.height = e.pageY;
+    consoleElement.style.top = e.pageY - 10 + 'px';
+    consoleElement.style.height =
+      mainContainer.getBoundingClientRect().height - e.pageY + 'px';
+  },
+  'row-resize'
+);
 document.addEventListener('keydown', e => {
   const activeElement = document.activeElement;
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {

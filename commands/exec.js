@@ -51,20 +51,6 @@ export const execute = async CONSOLE => {
       run();
       consoleElement.value = '';
       break;
-    case 'EXIT_FULLSCREEN':
-    case 'EXIT':
-      editorContainer.style.display = 'block';
-      fullRunButton.style.display = 'none';
-      mainContainer.classList.remove('large');
-      mainContainer.classList.add('small');
-      headerContainer.style.display = 'block';
-      editor.setSize(
-        mainContainer.getBoundingClientRect().width,
-        mainContainer.getBoundingClientRect().height - 40
-      );
-      consoleElement.value = '';
-      State.isFullScreen = false;
-      break;
 
     case 'FULLSCREEN':
     case 'FULL':
@@ -81,16 +67,7 @@ export const execute = async CONSOLE => {
         window.dispatchEvent(new Event('resize'));
       }
       break;
-    case 'SIZE':
-      // consoleElement.value = '\nSIZE ' + +PARAMS[0];
-      if (+PARAMS[0] === 0) {
-        State.canvasHeight = 0;
-        window.dispatchEvent(new Event('resize'));
-      } else {
-        State.canvasHeight = 250;
-      }
 
-      break;
     case 'BLANK':
     case 'NEW':
       execute({ value: 'EMPTY' });
@@ -109,22 +86,6 @@ export const execute = async CONSOLE => {
       execute({ value: 'SIZE 1' });
       window.dispatchEvent(new Event('resize'));
 
-      break;
-    case 'B':
-    case 'BIG':
-      consoleElement.style.height = window.innerHeight - 40 + 'px';
-      consoleElement.value = '';
-      break;
-    case 'M':
-    case 'MID':
-      consoleElement.style.height = window.innerHeight / 2 - 40 + 'px';
-      consoleElement.value = '';
-      break;
-    case 'PRESS':
-    case 'S':
-    case 'SMALL':
-      consoleElement.style.height = '50px';
-      consoleElement.value = '';
       break;
 
     case 'IMPORT':
@@ -265,7 +226,7 @@ export const execute = async CONSOLE => {
           unescape_strings: false,
           jslint_happy: true,
           end_with_newline: false,
-          wrap_line_length: '256',
+          wrap_line_length: Infinity,
           indent_inner_html: false,
           comma_first: false,
           e4x: true,

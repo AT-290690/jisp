@@ -54,7 +54,7 @@ const dfs = tree => {
       case '%':
         return '(' + dfs(tree.args[0]) + '%' + dfs(tree.args[1]) + ')';
       case '**':
-        return '(' + dfs(tree.args[0]) + '**' + dfs(tree.args[1]) + ')';
+        return '(' + dfs(tree.args[0]) + '**' + (dfs(tree.args[1]) || 2) + ')';
       case '!':
         return '!' + dfs(tree.args[0]);
       case '?': {
@@ -155,11 +155,25 @@ const dfs = tree => {
           return `void(${obj}[${key}]=${res})||${obj}\n`;
         }
       }
+
       case '+=': {
         const res = tree.args[1] ? dfs(tree.args[1]) : 1;
         const variable = dfs(tree.args[0]);
         return `void(${variable}+=${res})||${variable}\n`;
       }
+
+      case '-=': {
+        const res = tree.args[1] ? dfs(tree.args[1]) : 1;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}-=${res})||${variable}\n`;
+      }
+
+      case '*=': {
+        const res = tree.args[1] ? dfs(tree.args[1]) : 1;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}*=${res})||${variable}\n`;
+      }
+
       // case '++?': {
       //   const args = tree.args.map(dfs);
       //   return `_while(() => ${args[0]}, () => ${args[1]})`;

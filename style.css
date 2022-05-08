@@ -119,6 +119,11 @@ body {
 
   /* pointer-events: none; */
   bottom: 0;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .label {
   color: var(--comment);
@@ -205,18 +210,6 @@ body {
   display: none;
 }
 
-#next {
-  text-align: center;
-  color: var(--icons);
-  position: fixed;
-  font-size: 25px;
-  width: 100%;
-  background: var(--border);
-  cursor: pointer;
-  border: none;
-  height: 0px;
-  bottom: 60px;
-}
 #run,
 #full-run,
 #add-button,
@@ -235,4 +228,11 @@ body {
     opacity: 1;
     width: 15%;
   }
+}
+
+#console:hover {
+  border-top: 1px solid var(--color-secondary);
+}
+#console:active {
+  border-top: 5px solid var(--color-secondary);
 }

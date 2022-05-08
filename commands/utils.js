@@ -23,6 +23,7 @@ export const State = {
   comments: null,
   isFullScreen: false,
   isErrored: true,
+  height: window.innerHeight - 62,
   stash: { liveSession: '' }
 };
 const dfs = ast => {
@@ -256,4 +257,43 @@ export const newComp = () => {
   compositionContainer.appendChild(comp);
   editor.setValue('');
   return comp;
+};
+
+export const resizer = (resizer, mousemove, cursor) => {
+  resizer.style.cursor = cursor;
+  resizer.mousemove = mousemove;
+
+  resizer.onmousedown = function (e) {
+    document.documentElement.addEventListener(
+      'mousemove',
+      resizer.doDrag,
+      false
+    );
+    document.documentElement.addEventListener(
+      'mouseup',
+      resizer.stopDrag,
+      false
+    );
+  };
+
+  resizer.doDrag = e => {
+    if (e.which != 1) {
+      resizer.stopDrag(e);
+      return;
+    }
+    resizer.mousemove(e);
+  };
+
+  resizer.stopDrag = e => {
+    document.documentElement.removeEventListener(
+      'mousemove',
+      resizer.doDrag,
+      false
+    );
+    document.documentElement.removeEventListener(
+      'mouseup',
+      resizer.stopDrag,
+      false
+    );
+  };
 };
