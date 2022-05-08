@@ -27,7 +27,7 @@ export const print = function (...values) {
     return VOID;
   }
   values.forEach(
-    x => (consoleElement.value += ` ( ${JSON.stringify(x) ?? null} ) `)
+    x => (consoleElement.value += `( ${JSON.stringify(x) ?? null} )`)
   );
   return values;
 };

@@ -251,7 +251,6 @@ export const execute = async CONSOLE => {
       break;
     case 'TAB':
       {
-        const color = PARAMS[0] ?? '#161616';
         window.open().document.write(await execute({ value: '_COMPILE' }));
       }
       break;

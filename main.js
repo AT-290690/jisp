@@ -36,6 +36,9 @@ editorContainer.addEventListener(
 const resize = () => {
   if (State.isFullScreen) {
     editor.setSize(mainContainer.getBoundingClientRect().width, State.height);
+    consoleElement.style.top = State.height - 10 + 'px';
+    consoleElement.style.height =
+      mainContainer.getBoundingClientRect().height - State.height + 'px';
   }
 };
 window.addEventListener('resize', resize);
