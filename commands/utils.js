@@ -50,7 +50,11 @@ export const printErrors = (errors, args) => {
     consoleElement.classList.remove('info_line');
     consoleElement.classList.add('error_line');
     State.isErrored = true;
-    if (errors.message === 'Maximum call stack size exceeded')
+    if (
+      errors?.message &&
+      (errors.message.includes('Maximum call stack size exceeded') ||
+        errors.message.includes('too much recursion'))
+    )
       return (consoleElement.value =
         'RangeError: Maximum call stack size exceeded');
     const temp = dfs(args);
@@ -70,14 +74,16 @@ export const printErrors = (errors, args) => {
 //     : ''
 // }
 //cell({ ...std })(`=>()`);
+export const removeNoCode = source =>
+  source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '');
+export const wrapInBody = source => `=>(${source})`;
+
 export const exe = source => {
   State.list = { ...STD, ...State.list };
   const ENV = protolessModule(State.list);
   ENV.tokens = protolessModule(tokens);
   try {
-    const { result, AST, env } = cell(ENV)(`=> (
-      ${source}
-      )`);
+    const { result, AST, env } = cell(ENV)(`=>(${source})`);
     State.AST = AST;
     State.env = env;
     return result;
@@ -90,19 +96,19 @@ export const exe = source => {
 
 export const addSpace = str => str + '\n';
 
-export const printSelection = (selection, cursor, size) => {
+export const printSelection = (selection, source) => {
   const updatedSelection =
     selection[selection.length - 1] === ';'
       ? `#(${selection});`
       : `#(${selection})`;
-  if (cursor + updatedSelection.length < size) {
-    editor.replaceSelection(updatedSelection);
-    exe(editor.getValue());
-    const head = cursor;
-    const tail = cursor + updatedSelection.length;
-    editor.setSelection(head, tail);
-    editor.replaceSelection(selection);
-  }
+  // if (cursor + updatedSelection.length < size) {
+  editor.replaceSelection(updatedSelection);
+  exe(source);
+  // const head = cursor;
+  // const tail = cursor + updatedSelection.length;
+  // editor.setSelection(head, tail);
+  // editor.replaceSelection(selection);
+  // }
 };
 // export const stashComments = str => {
 //   State.comments = str.match(/;;.+/g);
@@ -119,9 +125,10 @@ export const revertComments = str => {
     return str;
   }
 };
-export const correctParenthesis = str => {
+export const isBalancedParenthesis = sourceCode => {
   let count = 0;
   const stack = [];
+  const str = sourceCode.replace(/"(.*?)"/g, '');
   const pairs = { ')': '(' };
   for (let i = 0; i < str.length; i++) {
     if (str[i] === '(') {
@@ -155,46 +162,46 @@ export const prettier = str => addSpace(str);
 
 export const depResolution = source => {
   const List = {};
-  source
-    .replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '')
-    .match(/<-(.*)\((.[A-Z"]+)\);/g)
-    ?.forEach(methods => {
-      const list = methods
-        .split(');')
-        .filter(x => x[0] === '<' && x[1] === '-' && x[2] === '(')
-        .join(');')
-        .replace(/\)|\(|<-+/g, ';')
-        .split(';')
-        .filter(Boolean)
-        .reduce(
-          (acc, item) => {
-            if (item[0] !== '"') {
-              acc._temp.push(item);
-            } else {
-              acc[item.substring(1, item.length - 1)] = [...acc._temp];
-              acc._temp = [];
-            }
-            return acc;
-          },
-          { _temp: [] }
-        );
-      delete list._temp;
-      for (const dep in list) {
-        list[dep].forEach(m => {
-          if (!List[dep]) List[dep] = {};
-          if (deps[dep][m] === undefined) {
-            printErrors(
-              `Reference error Module ${dep} does not provide an export named ${m}`
-            );
-            throw new SyntaxError(
-              `Module ${dep} does not provide an export named ${m}`
-            );
+  source.match(/<-(.*)\((.[A-Z"]+)\);/g)?.forEach(methods => {
+    const list = methods
+      .split(');')
+      .filter(x => x[0] === '<' && x[1] === '-' && x[2] === '(')
+      .join(');')
+      .replace(/\)|\(|<-+/g, ';')
+      .split(';')
+      .filter(Boolean)
+      .reduce(
+        (acc, item) => {
+          if (item[0] !== '"') {
+            acc._temp.push(item);
           } else {
-            List[dep][m] = deps[dep][m];
+            acc[item.substring(1, item.length - 1)] = [...acc._temp];
+            acc._temp = [];
           }
-        });
-      }
-    });
+          return acc;
+        },
+        { _temp: [] }
+      );
+    delete list._temp;
+    for (const dep in list) {
+      list[dep].forEach(m => {
+        if (!List[dep]) List[dep] = {};
+        if (!deps[dep]) {
+          printErrors(`Module ${dep} does not exist`);
+          throw new SyntaxError(`Module ${dep} does not exist`);
+        } else if (deps[dep][m] === undefined) {
+          printErrors(
+            `Reference error Module ${dep} does not provide an export named ${m}`
+          );
+          throw new SyntaxError(
+            `Module ${dep} does not provide an export named ${m}`
+          );
+        } else {
+          List[dep][m] = deps[dep][m];
+        }
+      });
+    }
+  });
   return List;
 };
 
@@ -203,23 +210,25 @@ export const run = () => {
   consoleElement.classList.add('info_line');
   consoleElement.classList.remove('error_line');
   consoleElement.value = '';
-  const cursor = editor.getCursor();
-  const selection = editor.getSelection();
+  // const cursor = editor.getCursor();
   const source = editor.getValue().trim();
-  State.list = depResolution(source);
-  const parenMatcher = correctParenthesis(source);
+  const sourceCode = removeNoCode(source);
+  State.list = depResolution(sourceCode);
+  const parenMatcher = isBalancedParenthesis(sourceCode);
   if (parenMatcher.diff === 0) {
-    const formatted = prettier(source); //revertComment(pr...)
-    if (selection.trim()) {
-      printSelection(selection.trim(), cursor, source.length);
-      editor.setValue(formatted);
+    // const formatted = prettier(source); //revertComment(pr...)
+    const selection = editor.getSelection();
+    if (selection) {
+      // printSelection(selection, cursor, source.length, sourceCode);
+      printSelection(selection, sourceCode);
+      // editor.setValue(formatted);
     } else {
-      print(exe(source));
-      if (formatted !== source) {
-        editor.setValue(formatted);
-      }
+      print(exe(sourceCode));
+      // if (formatted !== source) {
+      //   editor.setValue(formatted);
+      // }
     }
-    if (cursor < formatted.length) editor.setCursor(cursor);
+    // if (cursor < formatted.length) editor.setCursor(cursor);
   } else {
     printErrors(
       `Parenthesis are unbalanced by ${parenMatcher.diff > 0 ? '+' : ''}${

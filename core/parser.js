@@ -156,17 +156,9 @@ export const parse = program => {
   return result.expr;
 };
 
-export const toAst = args =>
-  parse(
-    args
-      .toString()
-      .replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '')
-      .trim()
-  );
-
 export const cell = (env, run = true) => {
-  return (...args) => {
-    const AST = toAst(args);
+  return args => {
+    const AST = parse(args);
     if (run) {
       const result = evaluate(AST, env);
       return { result, env, AST };

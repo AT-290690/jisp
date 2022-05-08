@@ -5,16 +5,13 @@ export const pipe =
   (...fns) =>
   x =>
     fns.reduce((v, f) => f(v), x);
-export const parsePath = (arg, env) =>
-  arg.type === 'value'
-    ? arg.value
-        .toString()
-        .split(';')
-        .map(x => x.trim())
-    : evaluate(arg, env)
-        .toString()
-        .split(';')
-        .map(x => x.trim());
+export const parsePath = (arg, env) => {
+  const path =
+    arg.type === 'value'
+      ? arg.value?.toString()
+      : evaluate(arg, env)?.toString();
+  return path ? path.split(';').map(x => x.trim()) : VOID;
+};
 const tokens = {
   ['?']: (args, env) => {
     if (args.length > 3 || args.length <= 1) {
@@ -358,7 +355,6 @@ const tokens = {
     }
 
     const entityName = args[0].name;
-
     const prop = parsePath(args[1], env);
 
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {

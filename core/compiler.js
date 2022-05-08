@@ -9,7 +9,7 @@ const dfs = tree => {
           .map((x, i) => {
             const res = dfs(x);
             if (res !== undefined && i === tree.args.length - 1) {
-              return 'return ' + res.toString().trimStart();
+              return '\nreturn ' + res.toString().trimStart();
             } else {
               return res;
             }
@@ -20,13 +20,13 @@ const dfs = tree => {
         const res = dfs(tree.args[1]);
         if (res !== undefined) {
           vars.add(tree.args[0].name);
-          return `${tree.args[0].name}=${res}\n`;
+          return `void(${tree.args[0].name}=${res})||${tree.args[0].name}\n`;
         }
         break;
       }
       case '=': {
         const res = dfs(tree.args[1]);
-        return `(${tree.args[0].name}=${res})\n`;
+        return `void(${tree.args[0].name}=${res})||${tree.args[0].name}\n`;
       }
       case '->': {
         const args = tree.args;
@@ -57,11 +57,9 @@ const dfs = tree => {
         return '(' + dfs(tree.args[0]) + '**' + dfs(tree.args[1]) + ')';
       case '!':
         return '!' + dfs(tree.args[0]);
-
       case '?': {
-        let decs = '';
         const conditionStack = [];
-        tree.args.map(dfs).forEach((x, i, a) => {
+        tree.args.map(dfs).forEach((x, i) => {
           if (i % 2 === 0) {
             conditionStack.push(x, '?');
           } else {
@@ -72,12 +70,11 @@ const dfs = tree => {
         if (conditionStack.length === 3) {
           conditionStack.push(':', 'null\n');
         }
-        return decs + '\n' + conditionStack.join(' ');
+        return `\n${conditionStack.join(' ')}\n`;
       }
       case '*?': {
-        let decs = '';
         const conditionStack = [];
-        tree.args.map(dfs).forEach((x, i, a) => {
+        tree.args.map(dfs).forEach((x, i) => {
           if (i % 2 === 0) {
             conditionStack.push(x, '?');
           } else {
@@ -86,7 +83,7 @@ const dfs = tree => {
         });
         conditionStack.pop();
         conditionStack.push(':', '0\n');
-        return decs + '\n' + conditionStack.join(' ');
+        return `\n${conditionStack.join(' ')}\n`;
       }
       case '.:':
         return '[' + tree.args.map(dfs).join(',') + ']';
@@ -129,7 +126,6 @@ const dfs = tree => {
           return `${dfs(tree.args[0])}[${dfs(tree.args[1])}]\n`;
         }
       }
-
       case '.-': {
         const res = dfs(tree.args[2]);
         if (tree.args[1].type === 'value') {
@@ -138,13 +134,12 @@ const dfs = tree => {
             .map(x => '["' + x.trim().replaceAll('"', '') + '"]')
             .join('');
           const obj = dfs(tree.args[0]);
-          return `void (delete ${obj}${path})||${obj}\n`;
+          return `void(delete ${obj}${path})||${obj}\n`;
         } else {
           const obj = dfs(tree.args[0]);
-          return `void (delete ${obj}[${res}])||${obj}\n`;
+          return `void(delete ${obj}[${res}])||${obj}\n`;
         }
       }
-
       case '.=': {
         const res = dfs(tree.args[2]);
         if (tree.args[1].type === 'value') {
@@ -153,16 +148,17 @@ const dfs = tree => {
             .map(x => '["' + x.trim().replaceAll('"', '') + '"]')
             .join('');
           const obj = dfs(tree.args[0]);
-          return `void (${obj}${path}=${res})||${obj}\n`;
+          return `void(${obj}${path}=${res})||${obj}\n`;
         } else {
           const obj = dfs(tree.args[0]);
-          return `void (${obj}[${res}]=${res})||${obj}\n`;
+          const key = dfs(tree.args[1]);
+          return `void(${obj}[${key}]=${res})||${obj}\n`;
         }
       }
-
       case '+=': {
         const res = tree.args[1] ? dfs(tree.args[1]) : 1;
-        return `(${dfs(tree.args[0])}+=${res})\n`;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}+=${res})||${variable}\n`;
       }
       // case '++?': {
       //   const args = tree.args.map(dfs);

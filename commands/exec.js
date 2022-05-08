@@ -10,7 +10,15 @@ import {
 import { editor } from '../main.js';
 import { compileToJavaScript } from '../core/compiler.js';
 import { cell } from '../core/parser.js';
-import { run, State, newComp, depResolution, printErrors } from './utils.js';
+import {
+  run,
+  State,
+  newComp,
+  depResolution,
+  printErrors,
+  wrapInBody,
+  removeNoCode
+} from './utils.js';
 export const execute = async CONSOLE => {
   consoleElement.classList.remove('error_line');
   consoleElement.classList.add('info_line');
@@ -203,16 +211,15 @@ export const execute = async CONSOLE => {
       break;
 
     case '_COMPILE': {
-      const source = editor.getValue();
+      const source = removeNoCode(editor.getValue());
       const List = depResolution(source);
       const { AST, env } = cell(
         protolessModule({ ...STD, ...List }),
         false
-      )(`=> (
-          ${source}
-          )`);
+      )(wrapInBody(source));
+
       const ignore = [
-        ...['#'],
+        ...['#', 'tco', 'void'],
         ...['!', '^', '>>>', '>>', '<<', '~', '|', '&'],
         ...['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', '%', '**']
       ];
@@ -220,6 +227,7 @@ export const execute = async CONSOLE => {
       ignore.forEach(op => {
         delete deps[op];
       });
+
       let standartLibrary = '{';
       for (const f in deps) {
         standartLibrary += `"${f}":{`;
@@ -235,7 +243,6 @@ export const execute = async CONSOLE => {
         standartLibrary += '},';
       }
       standartLibrary += '}';
-
       const pipe = `var _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);`;
       const curry = `var _curry = (fn, ...args) => (arg) => fn(arg, ...args);`;
       const tco = `var _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result };`;
@@ -243,7 +250,28 @@ export const execute = async CONSOLE => {
       const { program, vars } = compileToJavaScript(AST);
       const tops = vars.length ? `var ${vars.join(',')};\n` : '';
 
-      const script = `${tco}\n${pipe}\n${curry}\n${spread}\n((STD)=>{${tops}${program}})(${standartLibrary})`;
+      const script = js_beautify(
+        `\n${tco}\n${pipe}\n${curry}\n${spread}\n((STD)=>{${tops}${program}})(${standartLibrary})`,
+        {
+          indent_size: '2',
+          indent_char: ' ',
+          max_preserve_newlines: '-1',
+          preserve_newlines: false,
+          keep_array_indentation: true,
+          break_chained_methods: true,
+          indent_scripts: 'keep',
+          brace_style: 'none,preserve-inline',
+          space_before_conditional: true,
+          unescape_strings: false,
+          jslint_happy: true,
+          end_with_newline: false,
+          wrap_line_length: '256',
+          indent_inner_html: false,
+          comma_first: false,
+          e4x: true,
+          indent_empty_lines: false
+        }
+      );
       if (PARAMS?.[0]?.toUpperCase() === 'JS') return script;
       return `<head><title>Hyper Light Compiled</title><style> body { background: #161616 }</style><head><body>
 <script>${script}</script></body>`;
