@@ -218,17 +218,17 @@ export const run = () => {
   const parenMatcher = isBalancedParenthesis(sourceCode);
   if (parenMatcher.diff === 0) {
     // const formatted = prettier(source); //revertComment(pr...)
-    const selection = editor.getSelection();
-    if (selection) {
-      // printSelection(selection, cursor, source.length, sourceCode);
-      printSelection(selection, sourceCode);
-      // editor.setValue(formatted);
-    } else {
-      print(exe(sourceCode));
-      // if (formatted !== source) {
-      //   editor.setValue(formatted);
-      // }
-    }
+    // const selection = editor.getSelection();
+    // if (selection) {
+    // printSelection(selection, cursor, source.length, sourceCode);
+    // printSelection(selection, sourceCode);
+    // editor.setValue(formatted);
+    // } else {
+    print(exe(sourceCode));
+    // if (formatted !== source) {
+    //   editor.setValue(formatted);
+    // }
+    // }
     // if (cursor < formatted.length) editor.setCursor(cursor);
   } else {
     printErrors(

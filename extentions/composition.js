@@ -471,6 +471,7 @@ export const deps = {
       maxInt: Number.MAX_SAFE_INTEGER,
       infinity: Number.POSITIVE_INFINITY,
       PI: Math.PI,
+      numberToBinary: number => number.toString(2),
       parseInt: (number, base) => parseInt(number.toString(), base)
     },
     'MATH'
