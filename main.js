@@ -42,38 +42,40 @@ const resize = () => {
   }
 };
 window.addEventListener('resize', resize);
-resizer(
-  consoleElement,
-  e => {
-    editor.setSize(mainContainer.getBoundingClientRect().width, e.pageY);
-    State.height = e.pageY;
-    consoleElement.style.top = e.pageY - 10 + 'px';
-    consoleElement.style.height =
-      mainContainer.getBoundingClientRect().height - e.pageY + 'px';
-  },
-  'row-resize'
-);
-document.addEventListener('keydown', e => {
-  const activeElement = document.activeElement;
-  if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
-    e = e || window.event;
-    e.preventDefault();
-    e.stopPropagation();
-    run();
-  } else if (e.key === 'Enter') {
-    if (activeElement === consoleElement) {
-      execute(consoleElement);
+if (!/Mobi|Android/i.test(navigator.userAgent)) {
+  resizer(
+    consoleElement,
+    e => {
+      editor.setSize(mainContainer.getBoundingClientRect().width, e.pageY);
+      State.height = e.pageY;
+      consoleElement.style.top = e.pageY - 10 + 'px';
+      consoleElement.style.height =
+        mainContainer.getBoundingClientRect().height - e.pageY + 'px';
+    },
+    'row-resize'
+  );
+  document.addEventListener('keydown', e => {
+    const activeElement = document.activeElement;
+    if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
+      e = e || window.event;
+      e.preventDefault();
+      e.stopPropagation();
+      run();
+    } else if (e.key === 'Enter') {
+      if (activeElement === consoleElement) {
+        execute(consoleElement);
+      }
+    } else if (e.key === 'Escape' && (e.ctrlKey || e.metaKey)) {
+      if (activeElement === consoleElement) {
+        editor.focus();
+        State.activeWindow = editorContainer;
+      } else if (State.activeWindow === editorContainer) {
+        consoleElement.value = '';
+        consoleElement.focus();
+      }
     }
-  } else if (e.key === 'Escape' && (e.ctrlKey || e.metaKey)) {
-    if (activeElement === consoleElement) {
-      editor.focus();
-      State.activeWindow = editorContainer;
-    } else if (State.activeWindow === editorContainer) {
-      consoleElement.value = '';
-      consoleElement.focus();
-    }
-  }
-});
+  });
+}
 newComp().click();
 execute({ value: 'focus' });
 editor.setValue(``);

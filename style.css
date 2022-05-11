@@ -119,11 +119,6 @@ body {
 
   /* pointer-events: none; */
   bottom: 0;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 .label {
   color: var(--comment);
