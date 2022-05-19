@@ -6,7 +6,7 @@ import {
   mainContainer,
   helpButton,
   fullRunButton
-} from './extentions/composition.js';
+} from './extentions/extentions.js';
 import { execute } from './commands/exec.js';
 import { newComp, resizer, run, State } from './commands/utils.js';
 

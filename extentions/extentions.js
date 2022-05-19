@@ -472,7 +472,8 @@ export const deps = {
       infinity: Number.POSITIVE_INFINITY,
       PI: Math.PI,
       numberToBinary: number => number.toString(2),
-      parseInt: (number, base) => parseInt(number.toString(), base)
+      parseInt: (number, base) => parseInt(number.toString(), base),
+      toNumber: string => Number(string)
     },
     'MATH'
   ),

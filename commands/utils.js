@@ -8,7 +8,7 @@ import {
   compositionContainer,
   mainContainer,
   protolessModule
-} from '../extentions/composition.js';
+} from '../extentions/extentions.js';
 import { tokens } from '../core/tokens.js';
 
 export const getUserId = () => State.userId ?? localStorage.getItem('userId');

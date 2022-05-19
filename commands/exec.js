@@ -6,7 +6,7 @@ import {
   fullRunButton,
   protolessModule,
   STD
-} from '../extentions/composition.js';
+} from '../extentions/extentions.js';
 import { editor } from '../main.js';
 import { compileToJavaScript } from '../core/compiler.js';
 import { cell } from '../core/parser.js';
