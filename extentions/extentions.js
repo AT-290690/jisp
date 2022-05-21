@@ -444,6 +444,7 @@ export const deps = {
   ...prefixDep(SetCollection, 'SET'),
   ...prefixDep(
     {
+      clamp: (num, min, max) => Math.min(Math.max(num, min), max),
       add: (a, b) => a + b,
       sub: (a, b) => a - b,
       mult: (a, b) => a * b,
