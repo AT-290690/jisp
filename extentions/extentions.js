@@ -250,7 +250,12 @@ const iterators = {
     }
     return iterable;
   },
-
+  inside: (iterable, callback) => {
+    for (const i in iterable) {
+      callback(i);
+    }
+    return iterable;
+  },
   forOfEvery: (iterable, callback) => {
     for (const x of iterable) {
       callback(x);

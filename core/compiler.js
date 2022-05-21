@@ -127,7 +127,7 @@ const dfs = tree => {
         }
       }
       case '.-': {
-        const res = dfs(tree.args[2]);
+        const res = dfs(tree.args[1]);
         if (tree.args[1].type === 'value') {
           const keys = dfs(tree.args[1]).toString().split(';');
           const path = keys
