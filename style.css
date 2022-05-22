@@ -195,10 +195,10 @@ body {
   z-index: 1000;
 }
 #full-run {
-  bottom: 20px;
+  bottom: 0px;
   right: 10px;
   text-align: center;
-  padding: 5px;
+  padding: 0px;
   background-color: transparent;
   position: fixed;
   z-index: 1000;
