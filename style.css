@@ -2,13 +2,13 @@
   --gutters: #000000;
   --comment: #546a90;
   --linenumbers: #546a90;
-  --border: #7f83ff;
+  --border: #ffb76f;
   --background-primary: #161616;
-  --background-secondary: #ff4a9860;
+  --background-secondary: #6b6b6bfd;
   --color-primary: #718ec0;
-  --color-secondary: #42c6ff;
-  --color-thirdly: #ff4a98;
-  --color-fourtly: #ffce2e;
+  --color-secondary: #ffb76f;
+  --color-thirdly: #ffb76f;
+  --color-fourtly: #77ff92;
   --color-fiftly: #2eff85;
   --gutters-border: 1px solid transparent;
   --border-width: 1px;
@@ -16,12 +16,11 @@
   --warning: #ffed2b;
   --success: #00ff00;
   --icons: #fbf5f3;
-  --progress: #42c6ff;
-  --def: #42c6ff;
+  --def: #ff89ce;
   --atom: #ff57b9;
-  --number: #ff4a98;
+  --number: #24cefd;
   --string: #ffb76f;
-  --keyword: #7f83ff;
+  --keyword: #f5f2dd;
   --font-family: 'Fira Code';
 }
 

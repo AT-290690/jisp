@@ -412,6 +412,7 @@ const SetCollection = {
   },
   clear: entity => entity.clear(),
   toArray: entity => [...entity],
+  fromArray: (...array) => new Set(...array),
   size: entity => entity.size
 };
 const time = {
@@ -450,6 +451,7 @@ export const deps = {
   ...prefixDep(
     {
       clamp: (num, min, max) => Math.min(Math.max(num, min), max),
+      sqrt: num => Math.sqrt(num),
       add: (a, b) => a + b,
       sub: (a, b) => a - b,
       mult: (a, b) => a * b,

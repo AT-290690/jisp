@@ -268,15 +268,15 @@ const tokens = {
     const prop = parsePath(args[1], env);
     const value = evaluate(args[2], env);
 
-    if (prop.includes('innerHTML')) {
-      printErrors(
-        'SyntaxError Forbidden use of operation .= when setting innerHTML',
-        null
-      );
-      throw new TypeError(
-        'Forbidden use of operation .= when setting innerHTML'
-      );
-    }
+    // if (prop.includes('innerHTML')) {
+    //   printErrors(
+    //     'SyntaxError Forbidden use of operation .= when setting innerHTML',
+    //     null
+    //   );
+    //   throw new TypeError(
+    //     'Forbidden use of operation .= when setting innerHTML'
+    //   );
+    // }
 
     if (main.type === 'apply') {
       const entity = evaluate(main, env);
