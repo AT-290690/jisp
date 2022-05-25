@@ -76,10 +76,10 @@ if (!/Mobi|Android/i.test(navigator.userAgent)) {
     }
   });
 }
-newComp().click();
+newComp();
 execute({ value: 'focus' });
-editor.setValue(``);
-setTimeout(async () => {
+editor.setValue('');
+setTimeout(() => {
   document.body.removeChild(document.getElementById('splash-screen'));
   State.activeWindow = editorContainer;
   editor.focus();

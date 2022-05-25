@@ -71,7 +71,7 @@ export const execute = async CONSOLE => {
     case 'BLANK':
     case 'NEW':
       execute({ value: 'EMPTY' });
-      newComp().click();
+      newComp();
       break;
     case 'FOCUS':
       // execute({ value: 'EMPTY' });

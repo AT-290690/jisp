@@ -23,7 +23,7 @@ export const State = {
   comments: null,
   isFullScreen: false,
   isErrored: true,
-  height: window.innerHeight - 62,
+  height: window.innerHeight - 25,
   stash: { liveSession: '' }
 };
 const dfs = ast => {
@@ -245,17 +245,7 @@ export const mediumPassRegex = new RegExp(
 
 export const newComp = () => {
   const comp = document.createElement('div');
-  comp.classList.add('composition');
   mainContainer.style.display = 'block';
-  editor.setSize(
-    mainContainer.getBoundingClientRect().width,
-    mainContainer.getBoundingClientRect().height - 40
-  );
-  consoleElement.style.height = '50px';
-  mainContainer.style.marginBottom =
-    mainContainer.getBoundingClientRect().height + 'px';
-  compositionContainer.appendChild(comp);
-  editor.setValue('');
   return comp;
 };
 
