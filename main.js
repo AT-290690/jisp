@@ -81,6 +81,6 @@ execute({ value: 'focus' });
 editor.setValue('');
 setTimeout(() => {
   document.body.removeChild(document.getElementById('splash-screen'));
-  State.activeWindow = editorContainer;
-  editor.focus();
 }, 1000);
+State.activeWindow = editorContainer;
+editor.focus();

@@ -110,7 +110,7 @@ body {
 #console {
   outline: none;
   border: none;
-  height: 20px;
+  height: 50px;
   width: 100%;
   resize: none;
   position: fixed;
@@ -196,8 +196,7 @@ body {
 }
 #full-run {
   bottom: 10px;
-  right: 20px;
-  color: var(--color-primary);
+  right: 10px;
   text-align: center;
   padding: 0px;
   background-color: transparent;
