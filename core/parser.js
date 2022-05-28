@@ -39,17 +39,10 @@ const pipeArgs = expr => {
     if (!State.isInteractive)
       throw new SyntaxError(`Pipe functions have to start with |`, expr);
   }
+
   expr.args = [
     first,
     ...rest.map(arg => {
-      // if (arg.operator.name[1] === '>') {
-      //   return {
-      //     args: [...(arg.args ?? [])],
-      //     class: 'function',
-      //     type: 'apply',
-      //     operator: { type: 'word', name: arg.operator.name.substring(2) }
-      //   };
-      // } else
       if (arg.operator.name === '|=') {
         const fn = {
           args: [
@@ -70,12 +63,19 @@ const pipeArgs = expr => {
           operator: { type: 'word', name: ':' }
         };
       } else {
-        const fn = { name: arg.operator.name.substring(1), type: 'word' };
         return {
-          args: [fn, ...(arg.args ?? [])],
+          args: [
+            { type: 'word', name: '$*' },
+            {
+              args: [{ type: 'word', name: '$*' }, ...(arg.args ?? [])],
+              class: 'function',
+              type: 'apply',
+              operator: { name: arg.operator.name.substring(1), type: 'word' }
+            }
+          ],
           class: 'function',
           type: 'apply',
-          operator: { type: 'word', name: ':' }
+          operator: { name: '->', type: 'word' }
         };
       }
     })

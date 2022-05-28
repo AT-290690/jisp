@@ -48,8 +48,8 @@ export const execute = async CONSOLE => {
       break;
     case 'RUN':
     case 'SAVE':
-      run();
       consoleElement.value = '';
+      run();
       break;
 
     case 'FULLSCREEN':

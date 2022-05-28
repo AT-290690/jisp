@@ -78,7 +78,9 @@ if (!/Mobi|Android/i.test(navigator.userAgent)) {
 }
 newComp();
 execute({ value: 'focus' });
-editor.setValue('');
+editor.setValue(`|> (10; | + (1); | * (4))`);
+execute({ value: 'RUN' });
+
 setTimeout(() => {
   document.body.removeChild(document.getElementById('splash-screen'));
 }, 1000);
