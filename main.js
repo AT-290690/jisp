@@ -11,7 +11,7 @@ import { newComp, resizer, run, State } from './commands/utils.js';
 fullRunButton.addEventListener('click', run);
 
 export const editor = CodeMirror(editorContainer, {});
-editor.changeFontSize('10px');
+editor.changeFontSize('20px');
 editor.setSize(
   mainContainer.getBoundingClientRect().width,
   mainContainer.getBoundingClientRect().height - 80

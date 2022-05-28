@@ -57,6 +57,7 @@ const array = {
       return VOID;
     }
   },
+  lambda: callback => x => callback(x),
   indexedIteration: (entity, fn) =>
     entity.forEach((x, i, arr) => fn(i)) ?? VOID,
   forOf: (entity, fn) => entity.forEach((x, i, arr) => fn(x)) ?? VOID,

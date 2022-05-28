@@ -21,26 +21,32 @@
   --number: #24cefd;
   --string: #ffb76f;
   --keyword: #f5f2dd;
-  --font-family: 'Fira Code';
+  --font-family: 'Fantasque';
 }
-
 @font-face {
-  font-family: 'Fira Code';
-  src: url(assets/fonts/FiraCode-Regular.ttf) format('truetype');
+  font-family: 'Fantasque';
+  src: url(assets/fonts/Fantasque-Regular.otf) format('opentype');
   font-display: swap;
 }
 /* 
-@font-face {
-  font-family: 'Apple';
-  src: url(assets/fonts/Apple.ttf) format('truetype');
-  font-display: swap;
-}
 
 @font-face {
   font-family: 'Hermit-Regular';
   src: url(assets/fonts/Hermit-Regular.otf) format('opentype');
   font-display: swap;
-} */
+}
+@font-face {
+  font-family: 'Fira Code';
+  src: url(assets/fonts/FiraCode-Regular.ttf) format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Apple';
+  src: url(assets/fonts/Apple.ttf) format('truetype');
+  font-display: swap;
+}
+ */
 
 body {
   background-color: var(--background-primary);
@@ -116,6 +122,7 @@ body {
   position: fixed;
   border-top: 1px solid var(--comment);
   padding-left: 40px;
+  font-size: 20px;
   /* pointer-events: none; */
   bottom: 0;
 }
@@ -123,7 +130,7 @@ body {
 .label {
   color: var(--comment);
   font-family: var(--font-family);
-  font-size: 10px;
+  font-size: 20px;
   margin-left: 1%;
 }
 .composition {
