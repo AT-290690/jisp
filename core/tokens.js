@@ -260,13 +260,20 @@ const tokens = {
 
   ['.=']: (args, env) => {
     const main = args[0];
-    if (args.length !== 3 || main.type === 'value') {
-      printErrors('SyntaxError Invalid use of operation .=', args);
-      throw new SyntaxError('Invalid use of operation .=');
+    const last = args[args.length - 1];
+
+    const prop = [];
+
+    for (let i = 1; i < args.length - 1; i++) {
+      const arg = args[i];
+      prop.push(
+        (arg.type === 'value'
+          ? arg.value?.toString()
+          : evaluate(arg, env)?.toString()) ?? VOID
+      );
     }
 
-    const prop = parsePath(args[1], env);
-    const value = evaluate(args[2], env);
+    const value = evaluate(last, env);
 
     // if (prop.includes('innerHTML')) {
     //   printErrors(
@@ -281,7 +288,7 @@ const tokens = {
     if (main.type === 'apply') {
       const entity = evaluate(main, env);
       if (prop.length === 1) {
-        entity[prop] = value;
+        entity[prop[0]] = value;
       } else {
         let temp = entity;
         const last = prop.pop();
@@ -297,7 +304,7 @@ const tokens = {
         if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
           const entity = scope[entityName];
           if (prop.length === 1) {
-            entity[prop] = value;
+            entity[prop[0]] = value;
           } else {
             let temp = entity;
             const last = prop.pop();
@@ -313,18 +320,22 @@ const tokens = {
   },
 
   ['.-']: (args, env) => {
-    if (args.length !== 2 || args[0].type !== 'word') {
-      printErrors('SyntaxError Invalid use of operation .-', args);
-      throw new SyntaxError('Invalid use of operation .-');
+    const prop = [];
+    for (let i = 1; i < args.length; i++) {
+      const arg = args[i];
+      prop.push(
+        (arg.type === 'value'
+          ? arg.value?.toString()
+          : evaluate(arg, env)?.toString()) ?? VOID
+      );
     }
 
     const entityName = args[0].name;
-    const prop = parsePath(args[1], env);
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
       if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
         if (prop.length === 1) {
-          scope[entityName][prop];
-          delete scope[entityName][prop];
+          scope[entityName][prop[0]];
+          delete scope[entityName][prop[0]];
           return scope[entityName];
         } else {
           let temp = scope[entityName];
@@ -341,9 +352,14 @@ const tokens = {
   },
 
   ['.']: (args, env) => {
-    if (args.length !== 2) {
-      printErrors('SyntaxError Invalid use of operation .', args);
-      throw new SyntaxError('Invalid use of operation .');
+    const prop = [];
+    for (let i = 1; i < args.length; i++) {
+      const arg = args[i];
+      prop.push(
+        (arg.type === 'value'
+          ? arg.value?.toString()
+          : evaluate(arg, env)?.toString()) ?? VOID
+      );
     }
 
     if (args[0].type === 'apply') {
@@ -355,12 +371,11 @@ const tokens = {
     }
 
     const entityName = args[0].name;
-    const prop = parsePath(args[1], env);
 
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
       if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
         if (prop.length === 1) {
-          return scope[entityName][prop] ?? VOID;
+          return scope[entityName][prop[0]] ?? VOID;
         } else {
           let temp = scope[entityName];
           const last = prop.pop();
@@ -368,40 +383,6 @@ const tokens = {
             temp = temp[item];
           });
           return temp[last] ?? VOID;
-        }
-      }
-    }
-  },
-
-  ['?.']: (args, env) => {
-    if (args.length !== 2) {
-      printErrors('SyntaxError Invalid use of operation ?.', args);
-      throw new SyntaxError('Invalid use of operation ?.');
-    }
-
-    if (args[0].type === 'apply') {
-      env['0_annonymous'] = evaluate(args[0], env);
-      return tokens['?.'](
-        [{ name: '0_annonymous', type: 'word' }, args[1]],
-        env
-      );
-    }
-
-    const entityName = args[0].name;
-
-    const prop = parsePath(args[1], env);
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        if (prop.length === 1) {
-          return scope[entityName][prop] ?? VOID;
-        } else {
-          let temp = scope[entityName];
-          for (let i = 0; i < prop.length; i++) {
-            temp = temp[prop[i]];
-            if (temp === undefined) break;
-          }
-
-          return temp ?? VOID;
         }
       }
     }

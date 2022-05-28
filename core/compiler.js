@@ -1,4 +1,3 @@
-// const isVar = res => typeof res === 'string' && res.substring(0, 4) === 'var ';
 const vars = new Set();
 const dfs = tree => {
   if (!tree) return '';
@@ -116,44 +115,48 @@ const dfs = tree => {
       case ':':
         return `_curry(${tree.args.map(dfs).join(',')})\n`;
       case '.': {
-        if (tree.args[1].type === 'value') {
-          const keys = dfs(tree.args[1]).toString().split(';');
-          const path = keys
-            .map(x => '["' + x.trim().replaceAll('"', '') + '"]')
-            .join('');
-          return `${dfs(tree.args[0])}${path}\n`;
-        } else {
-          return `${dfs(tree.args[0])}[${dfs(tree.args[1])}]\n`;
+        const prop = [];
+        for (let i = 1; i < tree.args.length; i++) {
+          const arg = tree.args[i];
+          prop.push(
+            (arg.type === 'value'
+              ? '"' + arg.value?.toString().trim().replaceAll('"', '') + '"'
+              : dfs(arg)) ?? null
+          );
         }
+        const path = prop.map(x => '[' + x + ']').join('');
+        return `${dfs(tree.args[0])}${path}\n`;
       }
       case '.-': {
-        const res = dfs(tree.args[1]);
-        if (tree.args[1].type === 'value') {
-          const keys = dfs(tree.args[1]).toString().split(';');
-          const path = keys
-            .map(x => '["' + x.trim().replaceAll('"', '') + '"]')
-            .join('');
-          const obj = dfs(tree.args[0]);
-          return `void(delete ${obj}${path})||${obj}\n`;
-        } else {
-          const obj = dfs(tree.args[0]);
-          return `void(delete ${obj}[${res}])||${obj}\n`;
+        const prop = [];
+        for (let i = 1; i < tree.args.length; i++) {
+          const arg = tree.args[i];
+          prop.push(
+            (arg.type === 'value'
+              ? '"' + arg.value?.toString().trim().replaceAll('"', '') + '"'
+              : dfs(arg)) ?? null
+          );
         }
+        const path = prop.map(x => '[' + x + ']').join('');
+        const obj = dfs(tree.args[0]);
+        return `void(delete ${obj}${path})||${obj}\n`;
       }
       case '.=': {
-        const res = dfs(tree.args[2]);
-        if (tree.args[1].type === 'value') {
-          const keys = dfs(tree.args[1]).toString().split(';');
-          const path = keys
-            .map(x => '["' + x.trim().replaceAll('"', '') + '"]')
-            .join('');
-          const obj = dfs(tree.args[0]);
-          return `void(${obj}${path}=${res})||${obj}\n`;
-        } else {
-          const obj = dfs(tree.args[0]);
-          const key = dfs(tree.args[1]);
-          return `void(${obj}[${key}]=${res})||${obj}\n`;
+        const last = tree.args[tree.args.length - 1];
+        const res = dfs(last);
+        const prop = [];
+        for (let i = 1; i < tree.args.length - 1; i++) {
+          const arg = tree.args[i];
+          prop.push(
+            (arg.type === 'value'
+              ? '"' + arg.value?.toString().trim().replaceAll('"', '') + '"'
+              : dfs(arg)) ?? null
+          );
         }
+
+        const path = prop.map(x => '[' + x + ']').join('');
+        const obj = dfs(tree.args[0]);
+        return `void(${obj}${path}=${res})||${obj}\n`;
       }
 
       case '+=': {
@@ -201,7 +204,7 @@ const dfs = tree => {
   } else if (tree.type === 'word') {
     switch (tree.name) {
       case 'void':
-        return 'null';
+        return null;
       case '$*':
         return '_$';
       default:
