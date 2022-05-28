@@ -2,24 +2,12 @@ import { CodeMirror } from './libs/editor/cell.editor.bundle.js';
 import {
   consoleElement,
   editorContainer,
-  logoButton,
   mainContainer,
-  helpButton,
   fullRunButton
 } from './extentions/extentions.js';
 import { execute } from './commands/exec.js';
 import { newComp, resizer, run, State } from './commands/utils.js';
 
-helpButton.addEventListener('click', () => {
-  if (State.isHelpOpen) {
-    execute({ value: 'S' });
-    consoleElement.value = '';
-    State.isHelpOpen = false;
-  } else {
-    execute({ value: 'HELP' });
-  }
-});
-logoButton.addEventListener('click', run);
 fullRunButton.addEventListener('click', run);
 
 export const editor = CodeMirror(editorContainer, {});
@@ -78,8 +66,8 @@ if (!/Mobi|Android/i.test(navigator.userAgent)) {
 }
 newComp();
 execute({ value: 'focus' });
-editor.setValue(`|> (10; | + (1); | * (4))`);
-execute({ value: 'RUN' });
+editor.setValue('');
+// execute({ value: 'RUN' });
 
 setTimeout(() => {
   document.body.removeChild(document.getElementById('splash-screen'));

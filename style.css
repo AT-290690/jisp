@@ -115,7 +115,7 @@ body {
   resize: none;
   position: fixed;
   border-top: 1px solid var(--comment);
-
+  padding-left: 40px;
   /* pointer-events: none; */
   bottom: 0;
 }
@@ -195,14 +195,17 @@ body {
   z-index: 1000;
 }
 #full-run {
-  bottom: 10px;
-  right: 10px;
+  bottom: 5px;
+  left: 5px;
   text-align: center;
   padding: 0px;
   background-color: transparent;
   position: fixed;
-  z-index: 1000;
+  z-index: 2000;
   display: none;
+  padding-right: 15px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 #run,

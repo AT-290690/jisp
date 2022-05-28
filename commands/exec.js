@@ -57,7 +57,6 @@ export const execute = async CONSOLE => {
       {
         mainContainer.classList.remove('small');
         mainContainer.classList.add('large');
-        headerContainer.style.display = 'none';
         fullRunButton.style.display = 'block';
         // const w = mainContainer.getBoundingClientRect().width;
         // const h = mainContainer.getBoundingClientRect().height / 2;
