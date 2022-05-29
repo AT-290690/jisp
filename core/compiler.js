@@ -204,6 +204,7 @@ const dfs = tree => {
   } else if (tree.type === 'word') {
     switch (tree.name) {
       case 'void':
+      case 'VOID':
         return null;
       case '$*':
         return '_$';

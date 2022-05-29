@@ -429,6 +429,7 @@ const time = {
 };
 export const STD = {
   void: VOID,
+  VOID,
   tco:
     func =>
     (...args) => {
