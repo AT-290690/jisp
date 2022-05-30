@@ -202,10 +202,11 @@ const dfs = tree => {
               .join('');
           } else if (tree.args[0].type === 'word') {
             const [parent, method] = tree.operator.args;
+            const arg = tree.args.map(x => dfs(x));
             if (method.type === 'value') {
-              if (tree.args[0].type === 'word') {
-                return `${parent.name}["${method.value}"](${tree.args[0].name})\n`;
-              }
+              return `${parent.name}["${method.value}"](${arg.join(',')})\n`;
+            } else {
+              return `${parent.name}[${dfs(method)}](${arg.join(',')})\n`;
             }
           }
         }
