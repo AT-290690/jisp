@@ -188,16 +188,26 @@ const dfs = tree => {
             tree.operator.name + '(' + tree.args.map(dfs).join(',') + ')\n'
           );
         } else {
-          const imp = tree.args[0].value;
-          const methods = tree.operator.args.map(x => x.name);
-          return methods
-            .map(x => {
-              if (x) {
-                vars.add(x);
+          if (tree.args[0].type === 'value') {
+            const imp = tree.args[0].value;
+
+            const methods = tree.operator.args.map(x => x.name);
+            return methods
+              .map(x => {
+                if (x) {
+                  vars.add(x);
+                }
+                return `${x} = STD["${imp}"]["${x}"];`;
+              })
+              .join('');
+          } else if (tree.args[0].type === 'word') {
+            const [parent, method] = tree.operator.args;
+            if (method.type === 'value') {
+              if (tree.args[0].type === 'word') {
+                return `${parent.name}["${method.value}"](${tree.args[0].name})\n`;
               }
-              return `${x} = STD["${imp}"]["${x}"];`;
-            })
-            .join('');
+            }
+          }
         }
       }
     }
