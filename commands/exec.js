@@ -179,7 +179,7 @@ export const execute = async CONSOLE => {
       )(wrapInBody(source));
 
       const ignore = [
-        ...['#', 'tco', 'void'],
+        ...['#', 'tco', 'void', 'VOID'],
         ...['!', '^', '>>>', '>>', '<<', '~', '|', '&'],
         ...['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', '%', '**']
       ];

@@ -23,7 +23,7 @@ export const State = {
   comments: null,
   isFullScreen: false,
   isErrored: true,
-  height: window.innerHeight - 25,
+  height: window.innerHeight - 45,
   stash: { liveSession: '' }
 };
 const dfs = ast => {

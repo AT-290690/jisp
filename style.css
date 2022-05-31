@@ -2,12 +2,12 @@
   --gutters: #000000;
   --comment: #546a90;
   --linenumbers: #546a90;
-  --border: #ffb76f;
+  --border: #546a90;
   --background-primary: #161616;
   --background-secondary: #6b6b6bfd;
   --color-primary: #718ec0;
-  --color-secondary: #ffb76f;
-  --color-thirdly: #ffb76f;
+  --color-secondary: #ff57b9;
+  --color-thirdly: #ff57b9;
   --color-fourtly: #77ff92;
   --color-fiftly: #2eff85;
   --gutters-border: 1px solid transparent;
@@ -16,20 +16,26 @@
   --warning: #ffed2b;
   --success: #00ff00;
   --icons: #fbf5f3;
-  --def: #ff89ce;
+  --def: #acfa74;
   --atom: #ff57b9;
   --number: #24cefd;
-  --string: #ffb76f;
-  --keyword: #f5f2dd;
-  --font-family: 'Fantasque';
+  --string: #ff57b9;
+  --keyword: #fbf5f3;
+  --font-family: 'Gloria';
 }
+
+@font-face {
+  font-family: 'Gloria';
+  src: url(assets/fonts/Gloria.ttf) format('truetype');
+  font-display: swap;
+}
+
+/* 
 @font-face {
   font-family: 'Fantasque';
   src: url(assets/fonts/Fantasque-Regular.otf) format('opentype');
   font-display: swap;
 }
-/* 
-
 @font-face {
   font-family: 'Hermit-Regular';
   src: url(assets/fonts/Hermit-Regular.otf) format('opentype');
@@ -213,6 +219,8 @@ body {
   padding-right: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
+  font-family: var(--font-family);
+  color: var(--color-secondary);
 }
 
 #run,

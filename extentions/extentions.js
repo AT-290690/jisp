@@ -46,6 +46,8 @@ const object = {
   // get: (entity, prop) => entity[prop] ?? VOID
 };
 const array = {
+  makeArray: (...args) => args,
+
   matrix: (...dimensions) => {
     if (dimensions.length > 0) {
       const dim = dimensions[0];
@@ -283,92 +285,6 @@ const iterators = {
   }
 };
 
-const HashSet = {
-  makeHash: (...args) =>
-    args.reduce(
-      (acc, item) => ({
-        ...acc,
-        [LZUTF8.compress(JSON.stringify(item), {
-          outputEncoding: 'Base64'
-        })]: item
-      }),
-      {}
-    ),
-  in: (entity, callback) => {
-    for (const key in entity) {
-      callback(entity[key]);
-    }
-    return entity;
-  },
-  has: (entity, item) =>
-    +(
-      LZUTF8.compress(JSON.stringify(item), {
-        outputEncoding: 'Base64'
-      }) in entity
-    ),
-  add: (entity, ...values) => {
-    values.forEach(
-      value =>
-        (entity[
-          LZUTF8.compress(JSON.stringify(value), {
-            outputEncoding: 'Base64'
-          })
-        ] = value)
-    );
-  },
-  remove: (entity, ...values) => {
-    values.forEach(
-      value =>
-        delete entity[
-          LZUTF8.compress(JSON.stringify(value), {
-            outputEncoding: 'Base64'
-          })
-        ]
-    );
-  },
-  union: (a, b) => {
-    const out = {};
-    for (const key in a) {
-      out[key] = a[key];
-    }
-    for (const key in b) {
-      out[key] = b[key];
-    }
-    return out;
-  },
-  sect: (a, b) => {
-    const out = {};
-    for (const key in b) {
-      if (key in a) {
-        out[key] = b[key];
-      }
-    }
-    return out;
-  },
-  pop: (entity, item) => {
-    const key = LZUTF8.compress(JSON.stringify(item), {
-      outputEncoding: 'Base64'
-    });
-    const temp = entity[key];
-    delete entity[key];
-    return temp;
-  },
-  diff: (a, b) => {
-    const out = {};
-    for (const key in b) {
-      if (!(key in a)) {
-        out[key] = b[key];
-      }
-    }
-    for (const key in a) {
-      if (!(key in b)) {
-        out[key] = a[key];
-      }
-    }
-    return out;
-  }
-};
-
 const SetCollection = {
   makeSet: (...args) => new Set(args),
   has: (entity, item) => +entity.has(item),
@@ -448,7 +364,6 @@ export const deps = {
   ...prefixDep(time, 'TIME'),
   ...prefixDep(list, 'LIST'),
   ...prefixDep(array, 'ARRAY'),
-  ...prefixDep(HashSet, 'HASH'),
   ...prefixDep(SetCollection, 'SET'),
   ...prefixDep(
     {
