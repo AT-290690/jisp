@@ -188,9 +188,11 @@ const dfs = tree => {
             tree.operator.name + '(' + tree.args.map(dfs).join(',') + ')\n'
           );
         } else {
-          if (tree.args[0].type === 'value') {
+          if (
+            tree.operator.operator.name === '<-' &&
+            tree.args[0].type === 'value'
+          ) {
             const imp = tree.args[0].value;
-
             const methods = tree.operator.args.map(x => x.name);
             return methods
               .map(x => {
@@ -200,7 +202,10 @@ const dfs = tree => {
                 return `${x} = STD["${imp}"]["${x}"];`;
               })
               .join('');
-          } else if (tree.args[0].type === 'word') {
+          } else if (
+            tree.operator.operator.name === '.' &&
+            tree.type === 'apply'
+          ) {
             const [parent, method] = tree.operator.args;
             const arg = tree.args.map(x => dfs(x));
             if (method.type === 'value') {

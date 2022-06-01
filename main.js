@@ -66,7 +66,7 @@ if (!/Mobi|Android/i.test(navigator.userAgent)) {
 }
 newComp();
 execute({ value: 'focus' });
-editor.setValue('');
+editor.setValue();
 // execute({ value: 'RUN' });
 
 setTimeout(() => {

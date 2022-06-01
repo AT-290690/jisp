@@ -364,6 +364,14 @@ export const deps = {
   ...prefixDep(time, 'TIME'),
   ...prefixDep(list, 'LIST'),
   ...prefixDep(array, 'ARRAY'),
+  ...prefixDep(
+    {
+      panic: message => {
+        throw new Error(message);
+      }
+    },
+    'ERROR'
+  ),
   ...prefixDep(SetCollection, 'SET'),
   ...prefixDep(
     {

@@ -21,16 +21,27 @@
   --number: #24cefd;
   --string: #ff57b9;
   --keyword: #fbf5f3;
-  --font-family: 'Gloria';
+  --font-family: 'BabyDoll';
 }
 
+@font-face {
+  font-family: 'BabyDoll';
+  src: url(assets/fonts/BabyDoll.ttf) format('truetype');
+  font-display: swap;
+}
+/* 
+
+@font-face {
+  font-family: 'PerfectJour';
+  src: url(assets/fonts/PerfectJour.ttf) format('truetype');
+  font-display: swap;
+}
 @font-face {
   font-family: 'Gloria';
   src: url(assets/fonts/Gloria.ttf) format('truetype');
   font-display: swap;
 }
 
-/* 
 @font-face {
   font-family: 'Fantasque';
   src: url(assets/fonts/Fantasque-Regular.otf) format('opentype');
