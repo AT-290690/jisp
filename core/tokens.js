@@ -118,83 +118,83 @@ const tokens = {
     env[args[0].name] = value;
     return value;
   },
-  ['+=']: (args, env) => {
-    if (args.length === 0 || args[0].type !== 'word') {
-      printErrors('SyntaxError Invalid use of operation +=', args);
+  // ['+=']: (args, env) => {
+  //   if (args.length === 0 || args[0].type !== 'word') {
+  //     printErrors('SyntaxError Invalid use of operation +=', args);
 
-      throw new SyntaxError('Invalid use of operation +=');
-    }
-    const entityName = args[0].name;
-    let value = evaluate(args[0], env);
-    const inc = args[1] ? evaluate(args[1], env) : 1;
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        value += inc;
-        scope[entityName] = value;
-        return value;
-      }
-    }
-    printErrors(
-      `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
-      sthd
-    );
+  //     throw new SyntaxError('Invalid use of operation +=');
+  //   }
+  //   const entityName = args[0].name;
+  //   let value = evaluate(args[0], env);
+  //   const inc = args[1] ? evaluate(args[1], env) : 1;
+  //   for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
+  //     if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+  //       value += inc;
+  //       scope[entityName] = value;
+  //       return value;
+  //     }
+  //   }
+  //   printErrors(
+  //     `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
+  //     sthd
+  //   );
 
-    throw new ReferenceError(
-      `Tried incrementing an undefined variable: ${entityName}`
-    );
-  },
+  //   throw new ReferenceError(
+  //     `Tried incrementing an undefined variable: ${entityName}`
+  //   );
+  // },
 
-  ['-=']: (args, env) => {
-    if (args.length === 0 || args[0].type !== 'word') {
-      printErrors('SyntaxError Invalid use of operation -=', args);
+  // ['-=']: (args, env) => {
+  //   if (args.length === 0 || args[0].type !== 'word') {
+  //     printErrors('SyntaxError Invalid use of operation -=', args);
 
-      throw new SyntaxError('Invalid use of operation -=');
-    }
-    const entityName = args[0].name;
-    let value = evaluate(args[0], env);
-    const inc = args[1] ? evaluate(args[1], env) : 1;
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        value -= inc;
-        scope[entityName] = value;
-        return value;
-      }
-    }
-    printErrors(
-      `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
-      args
-    );
+  //     throw new SyntaxError('Invalid use of operation -=');
+  //   }
+  //   const entityName = args[0].name;
+  //   let value = evaluate(args[0], env);
+  //   const inc = args[1] ? evaluate(args[1], env) : 1;
+  //   for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
+  //     if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+  //       value -= inc;
+  //       scope[entityName] = value;
+  //       return value;
+  //     }
+  //   }
+  //   printErrors(
+  //     `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
+  //     args
+  //   );
 
-    throw new ReferenceError(
-      `Tried incrementing an undefined variable: ${entityName}`
-    );
-  },
+  //   throw new ReferenceError(
+  //     `Tried incrementing an undefined variable: ${entityName}`
+  //   );
+  // },
 
-  ['*=']: (args, env) => {
-    if (args.length === 0 || args[0].type !== 'word') {
-      printErrors('SyntaxError Invalid use of operation *=', args);
+  // ['*=']: (args, env) => {
+  //   if (args.length === 0 || args[0].type !== 'word') {
+  //     printErrors('SyntaxError Invalid use of operation *=', args);
 
-      throw new SyntaxError('Invalid use of operation *=');
-    }
-    const entityName = args[0].name;
-    let value = evaluate(args[0], env);
-    const inc = args[1] ? evaluate(args[1], env) : 1;
-    for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
-      if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
-        value *= inc;
-        scope[entityName] = value;
-        return value;
-      }
-    }
-    printErrors(
-      `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
-      sthd
-    );
+  //     throw new SyntaxError('Invalid use of operation *=');
+  //   }
+  //   const entityName = args[0].name;
+  //   let value = evaluate(args[0], env);
+  //   const inc = args[1] ? evaluate(args[1], env) : 1;
+  //   for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
+  //     if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
+  //       value *= inc;
+  //       scope[entityName] = value;
+  //       return value;
+  //     }
+  //   }
+  //   printErrors(
+  //     `ReferenceError Tried incrementing an undefined variable: ${entityName}`,
+  //     sthd
+  //   );
 
-    throw new ReferenceError(
-      `Tried incrementing an undefined variable: ${entityName}`
-    );
-  },
+  //   throw new ReferenceError(
+  //     `Tried incrementing an undefined variable: ${entityName}`
+  //   );
+  // },
   ['->']: (args, env) => {
     if (!args.length) {
       printErrors('SyntaxError Functions need a body', args);
