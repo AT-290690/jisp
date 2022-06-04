@@ -187,23 +187,23 @@ const dfs = tree => {
         return `void(${obj}${path}=${res})||${obj}\n`;
       }
 
-      // case '+=': {
-      //   const res = tree.args[1] ? dfs(tree.args[1]) : 1;
-      //   const variable = dfs(tree.args[0]);
-      //   return `void(${variable}+=${res})||${variable}\n`;
-      // }
+      case '+=': {
+        const res = tree.args[1] ? dfs(tree.args[1]) : 1;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}+=${res})||${variable}\n`;
+      }
 
-      // case '-=': {
-      //   const res = tree.args[1] ? dfs(tree.args[1]) : 1;
-      //   const variable = dfs(tree.args[0]);
-      //   return `void(${variable}-=${res})||${variable}\n`;
-      // }
+      case '-=': {
+        const res = tree.args[1] ? dfs(tree.args[1]) : 1;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}-=${res})||${variable}\n`;
+      }
 
-      // case '*=': {
-      //   const res = tree.args[1] ? dfs(tree.args[1]) : 1;
-      //   const variable = dfs(tree.args[0]);
-      //   return `void(${variable}*=${res})||${variable}\n`;
-      // }
+      case '*=': {
+        const res = tree.args[1] ? dfs(tree.args[1]) : 1;
+        const variable = dfs(tree.args[0]);
+        return `void(${variable}*=${res})||${variable}\n`;
+      }
 
       // case '++?': {
       //   const args = tree.args.map(dfs);

@@ -1,13 +1,10 @@
+import { protolessModule, STD } from '../extentions/extentions.js';
 import {
   consoleElement,
-  editorContainer,
-  headerContainer,
   mainContainer,
   fullRunButton,
-  protolessModule,
-  STD
-} from '../extentions/extentions.js';
-import { editor } from '../main.js';
+  editor
+} from '../main.js';
 import { compileToJavaScript } from '../core/compiler.js';
 import { cell } from '../core/parser.js';
 import {

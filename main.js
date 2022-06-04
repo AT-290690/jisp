@@ -1,10 +1,14 @@
 import { CodeMirror } from './libs/editor/cell.editor.bundle.js';
-import {
-  consoleElement,
-  editorContainer,
-  mainContainer,
-  fullRunButton
-} from './extentions/extentions.js';
+export const consoleElement = document.getElementById('console');
+export const editorContainer = document.getElementById('editor-container');
+export const mainContainer = document.getElementById('main-container');
+export const logoButton = document.getElementById('run');
+export const helpButton = document.getElementById('help');
+export const headerContainer = document.getElementById('header');
+export const fullRunButton = document.getElementById('full-run');
+export const compositionContainer = document.getElementById(
+  'composition-container'
+);
 import { execute } from './commands/exec.js';
 import { newComp, resizer, run, State } from './commands/utils.js';
 

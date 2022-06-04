@@ -1,15 +1,14 @@
 import { VOID } from '../core/tokens.js';
-export const consoleElement = document.getElementById('console');
-export const editorContainer = document.getElementById('editor-container');
-export const mainContainer = document.getElementById('main-container');
-export const logoButton = document.getElementById('run');
-export const helpButton = document.getElementById('help');
-export const headerContainer = document.getElementById('header');
-export const fullRunButton = document.getElementById('full-run');
-
-export const compositionContainer = document.getElementById(
-  'composition-container'
-);
+import {
+  consoleElement,
+  editorContainer,
+  mainContainer,
+  logoButton,
+  helpButton,
+  headerContainer,
+  fullRunButton,
+  compositionContainer
+} from '../main.js';
 const prefixDep = (dep, prefix = '') =>
   prefix
     ? Object.entries(dep).reduce((acc, [key, value]) => {
@@ -27,7 +26,7 @@ export const print = function (...values) {
     return VOID;
   }
   values.forEach(
-    x => (consoleElement.value += `( ${JSON.stringify(x) ?? null} )`)
+    x => (consoleElement.value += `[ ${JSON.stringify(x) ?? null} ]`)
   );
   return values;
 };

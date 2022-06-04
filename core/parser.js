@@ -83,7 +83,7 @@ const pipeArgs = expr => {
 };
 
 export const parseApply = (expr, program) => {
-  if (program[0] !== '(') {
+  if (program[0] !== '[') {
     return { expr: expr, rest: program };
   }
 
@@ -95,20 +95,20 @@ export const parseApply = (expr, program) => {
     class: 'function'
   };
 
-  while (program[0] !== ')') {
+  while (program[0] !== ']') {
     const arg = parseExpression(program);
     expr.args.push(arg.expr);
     program = arg.rest;
     if (program[0] === ';') {
       program = program.slice(1);
-    } else if (program[0] !== ')') {
+    } else if (program[0] !== ']') {
       printErrors(
-        `SyntaxError Unexpected token - Expected ';' or ')'" but got "${program[0]}"`,
+        `SyntaxError Unexpected token - Expected ';' or ']'" but got "${program[0]}"`,
         expr
       );
       if (!State.isInteractive)
         throw new SyntaxError(
-          `Unexpected token - Expected ';' or ')'" but got "${program[0]}"`,
+          `Unexpected token - Expected ';' or ']'" but got "${program[0]}"`,
           expr
         );
     }
@@ -135,10 +135,10 @@ export const parseExpression = program => {
       value: Number(match[0]),
       class: 'number'
     };
-  } else if ((match = /^[^\s();"]+/.exec(program))) {
+  } else if ((match = /^[^\s\[\];"]+/.exec(program))) {
     expr = { type: 'word', name: match[0] };
   } else {
-    const snapshot = prettier(program.split(');')[0].split(')')[0]).trim();
+    const snapshot = prettier(program.split('];')[0].split(']')[0]).trim();
     printErrors(`SyntaxError Unexpect syntax: "${snapshot}"`);
     if (!State.isInteractive)
       throw new SyntaxError(`Unexpect syntax: "${snapshot}"`);

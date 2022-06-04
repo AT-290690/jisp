@@ -1,14 +1,7 @@
 import { cell } from '../core/parser.js';
 import { editor } from '../main.js';
-import {
-  STD,
-  deps,
-  consoleElement,
-  print,
-  compositionContainer,
-  mainContainer,
-  protolessModule
-} from '../extentions/extentions.js';
+import { STD, deps, print, protolessModule } from '../extentions/extentions.js';
+import { consoleElement, mainContainer } from '../main.js';
 import { tokens } from '../core/tokens.js';
 
 export const getUserId = () => State.userId ?? localStorage.getItem('userId');
@@ -61,7 +54,7 @@ export const printErrors = (errors, args) => {
     const temp = dfs(args);
     if (temp.fn || temp.res) {
       consoleElement.value =
-        errors + ' (near "' + temp.res + '" in function "' + temp.fn + '") ';
+        errors + ' [near "' + temp.res + '" in function "' + temp.fn + '"] ';
     } else {
       consoleElement.value = errors;
     }
@@ -77,14 +70,14 @@ export const printErrors = (errors, args) => {
 //cell({ ...std })(`=>()`);
 export const removeNoCode = source =>
   source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '');
-export const wrapInBody = source => `=>(${source})`;
+export const wrapInBody = source => `=>[${source}]`;
 
 export const exe = source => {
   State.list = { ...STD, ...State.list };
   const ENV = protolessModule(State.list);
   ENV.tokens = protolessModule(tokens);
   try {
-    const { result, AST, env } = cell(ENV)(`=>(${source})`);
+    const { result, AST, env } = cell(ENV)(wrapInBody(source));
     State.AST = AST;
     State.env = env;
     return result;
@@ -100,8 +93,8 @@ export const addSpace = str => str + '\n';
 export const printSelection = (selection, source) => {
   const updatedSelection =
     selection[selection.length - 1] === ';'
-      ? `#(${selection});`
-      : `#(${selection})`;
+      ? `#[${selection}];`
+      : `#[${selection}]`;
   // if (cursor + updatedSelection.length < size) {
   editor.replaceSelection(updatedSelection);
   exe(source);
@@ -130,9 +123,9 @@ export const isBalancedParenthesis = sourceCode => {
   let count = 0;
   const stack = [];
   const str = sourceCode.replace(/"(.*?)"/g, '');
-  const pairs = { ')': '(' };
+  const pairs = { ']': '[' };
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === '(') {
+    if (str[i] === '[') {
       stack.push(str[i]);
     } else if (str[i] in pairs) {
       if (stack.pop() !== pairs[str[i]]) {
@@ -163,12 +156,12 @@ export const prettier = str => addSpace(str);
 
 export const depResolution = source => {
   const List = {};
-  source.match(/<-(.*)\((.[A-Z"]+)\);/g)?.forEach(methods => {
+  source.match(/<-(.*)\[(.[A-Z"]+)\];/g)?.forEach(methods => {
     const list = methods
-      .split(');')
-      .filter(x => x[0] === '<' && x[1] === '-' && x[2] === '(')
-      .join(');')
-      .replace(/\)|\(|<-+/g, ';')
+      .split('];')
+      .filter(x => x[0] === '<' && x[1] === '-' && x[2] === '[')
+      .join('];')
+      .replace(/\]|\[|<-+/g, ';')
       .split(';')
       .filter(Boolean)
       .reduce(
@@ -234,14 +227,10 @@ export const run = () => {
     printErrors(
       `Parenthesis are unbalanced by ${parenMatcher.diff > 0 ? '+' : ''}${
         parenMatcher.diff
-      } ")"`
+      } "]"`
     );
   }
 };
-
-export const mediumPassRegex = new RegExp(
-  '((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))'
-);
 
 export const newComp = () => {
   const comp = document.createElement('div');
