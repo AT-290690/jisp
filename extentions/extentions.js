@@ -1,14 +1,5 @@
 import { VOID } from '../core/tokens.js';
-import {
-  consoleElement,
-  editorContainer,
-  mainContainer,
-  logoButton,
-  helpButton,
-  headerContainer,
-  fullRunButton,
-  compositionContainer
-} from '../main.js';
+import { consoleElement } from '../main.js';
 const prefixDep = (dep, prefix = '') =>
   prefix
     ? Object.entries(dep).reduce((acc, [key, value]) => {
