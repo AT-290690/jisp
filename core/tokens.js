@@ -76,8 +76,9 @@ const tokens = {
     }
     const [first, ...rest] = args;
     let res = 0;
+    const match = evaluate(first, env);
     rest.forEach(item => {
-      res = isEqual(first, evaluate(item, env));
+      res = isEqual(match, evaluate(item, env));
     });
     return res;
   },
