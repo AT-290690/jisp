@@ -70,6 +70,10 @@ const tokens = {
     return res;
   },
   ['===']: (args, env) => {
+    if (args.length === 0) {
+      printErrors('SyntaxError Invalid number of arguments  to ===', args);
+      throw new SyntaxError('Invalid number of arguments  to ===');
+    }
     const [first, ...rest] = args;
     let res = 0;
     rest.forEach(item => {
@@ -78,6 +82,10 @@ const tokens = {
     return res;
   },
   ['==*']: (args, env) => {
+    if (args.length < 2) {
+      printErrors('SyntaxError Invalid number of arguments  to ==*', args);
+      throw new SyntaxError('Invalid number of arguments  to ==*');
+    }
     const [first, ...rest] = args;
     let res = 0;
     const match = evaluate(first, env);
