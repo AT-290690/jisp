@@ -83,10 +83,10 @@ const tokens = {
     const match = evaluate(first, env);
     for (let i = 0; i < rest.length; i += 2) {
       if (i === rest.length - 1 && res === 0) {
-        res = +evaluate(rest[i], env);
+        res = evaluate(rest[i], env);
         break;
       } else if (!!isEqual(match, evaluate(rest[i], env))) {
-        res = +evaluate(rest[i + 1], env);
+        res = evaluate(rest[i + 1], env);
         break;
       }
     }
