@@ -70,7 +70,7 @@ const tokens = {
     return res;
   },
   ['===']: (args, env) => {
-    if (args.length === 0) {
+    if (args.length < 2) {
       printErrors('SyntaxError Invalid number of arguments  to ===', args);
       throw new SyntaxError('Invalid number of arguments  to ===');
     }
@@ -83,7 +83,11 @@ const tokens = {
     return res;
   },
   ['==*']: (args, env) => {
-    if (args.length < 2) {
+    if (args.length % 2 !== 0) {
+      printErrors('SyntaxError ==* has to end with a default case', args);
+      throw new SyntaxError('==* has to end with a default case');
+    }
+    if (args.length < 4) {
       printErrors('SyntaxError Invalid number of arguments  to ==*', args);
       throw new SyntaxError('Invalid number of arguments  to ==*');
     }
