@@ -1,5 +1,33 @@
 import { printErrors } from '../commands/utils.js';
 import evaluate from './interpreter.js';
+const isEqual = (a, b) => {
+  const typeA = typeof a,
+    typeB = typeof b;
+  if (typeA !== typeB) return 0;
+  if (typeA === 'number' || typeA === 'string' || typeA === 'boolean') {
+    return +(a === b);
+  }
+  if (typeA === 'object') {
+    const isArrayA = Array.isArray(a),
+      isArrayB = Array.isArray(b);
+    if (isArrayA !== isArrayB) return 0;
+    if (isArrayA && isArrayB) {
+      if (a.length !== b.length) return 0;
+      return +a.every((item, index) => isEqual(item, b[index]));
+    } else {
+      if (a === undefined || a === null || b === undefined || b === null)
+        return +(a === b);
+      if (Object.keys(a).length !== Object.keys(b).length) return 0;
+      for (const key in a) {
+        if (!isEqual(a[key], b[key])) {
+          return 0;
+        }
+      }
+      return 1;
+    }
+  }
+};
+
 export const VOID = null;
 export const pipe =
   (...fns) =>
@@ -41,7 +69,29 @@ const tokens = {
     }
     return res;
   },
-
+  ['===']: (args, env) => {
+    const [first, ...rest] = args;
+    let res = 0;
+    rest.forEach(item => {
+      res = isEqual(first, evaluate(item, env));
+    });
+    return res;
+  },
+  ['==*']: (args, env) => {
+    const [first, ...rest] = args;
+    let res = 0;
+    const match = evaluate(first, env);
+    for (let i = 0; i < rest.length; i += 2) {
+      if (i === rest.length - 1 && res === 0) {
+        res = +evaluate(rest[i], env);
+        break;
+      } else if (!!isEqual(match, evaluate(rest[i], env))) {
+        res = +evaluate(rest[i + 1], env);
+        break;
+      }
+    }
+    return res;
+  },
   ['&&']: (args, env) => {
     if (args.length === 0) {
       printErrors('SyntaxError Invalid number of arguments to &&', args);

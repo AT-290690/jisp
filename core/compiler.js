@@ -35,6 +35,34 @@ const dfs = tree => {
           body.type === 'apply' || body.type === 'value' ? 'return ' : ' '
         } ${evaluatedBody.trimStart()}\n}\n`;
       }
+      case '===': {
+        const [first, ...rest] = tree.args;
+        if (rest.length === 1) {
+          return `_isEqual(${dfs(first)},${dfs(rest[0])})`;
+        } else {
+          return (
+            '(' +
+            rest.map(x => `_isEqual(${dfs(first)}, ${dfs(x)})`).join('&&') +
+            ')'
+          );
+        }
+      }
+
+      case '==*': {
+        const [first, ...rest] = tree.args;
+        const match = dfs(first);
+        let output = '';
+        for (let i = 0; i < rest.length; i += 2) {
+          if (i === rest.length - 1) {
+            output += dfs(rest[i]);
+          } else {
+            output += `_isEqual(${match}, ${dfs(rest[i])}) ? ${dfs(
+              rest[i + 1]
+            )} : `;
+          }
+        }
+        return output;
+      }
       case '==':
         return '(' + tree.args.map(dfs).join('===') + ')';
       case '+':

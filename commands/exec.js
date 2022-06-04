@@ -202,16 +202,18 @@ export const execute = async CONSOLE => {
         }
         standartLibrary += '},';
       }
+
       standartLibrary += '}';
       const pipe = `var _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);`;
       const curry = `var _curry = (fn, ...args) => (arg) => fn(arg, ...args);`;
       const tco = `var _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result };`;
       const spread = `var _spread = (items) => Array.isArray(items[0]) ? items.reduce((acc, item) => [...acc, ...item], []) : items.reduce((acc, item) => ({ ...acc, ...item }), {});`;
+      const is_equal = `var _isEqual = (a, b) => {const typeA = typeof a, typeB = typeof b; if (typeA !== typeB) return 0; if (typeA === 'number' || typeA === 'string' || typeA === 'boolean') { return +(a === b); } if (typeA === 'object') { const isArrayA = Array.isArray(a), isArrayB = Array.isArray(b); if (isArrayA !== isArrayB) return 0; if (isArrayA && isArrayB) { if (a.length !== b.length) return 0; return +a.every((item, index) => isEqual(item, b[index])); } else { if (a === undefined || a === null || b === undefined || b === null) return +(a === b); if (Object.keys(a).length !== Object.keys(b).length) return 0; for (const key in a) { if (!isEqual(a[key], b[key])) { return 0; }} return 1; }}}`;
       const { program, vars } = compileToJavaScript(AST);
       const tops = vars.length ? `var ${vars.join(',')};\n` : '';
 
       const script = js_beautify(
-        `\n${tco}\n${pipe}\n${curry}\n${spread}\n((STD)=>{${tops}${program}})(${standartLibrary})`,
+        `\n${tco}\n${pipe}\n${curry}\n${spread}\n${is_equal}\n((STD)=>{${tops}${program}})(${standartLibrary})`,
         {
           indent_size: '2',
           indent_char: ' ',
