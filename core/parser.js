@@ -1,4 +1,4 @@
-import { prettier, State, printErrors } from '../commands/utils.js';
+import { prettier, printErrors } from '../commands/utils.js';
 import evaluate from './interpreter.js';
 const tailCallOpt = (children, name, parent) => {
   for (let i = 0; i < children.length; i++) {
@@ -36,8 +36,7 @@ const pipeArgs = expr => {
   const [first, ...rest] = expr.args;
   if (!rest.every(x => x.operator.name[0] === '|')) {
     printErrors(`SyntaxError Pipe functions have to start with |`, expr);
-    if (!State.isInteractive)
-      throw new SyntaxError(`Pipe functions have to start with |`, expr);
+    throw new SyntaxError(`Pipe functions have to start with |`, expr);
   }
 
   expr.args = [
@@ -106,11 +105,10 @@ export const parseApply = (expr, program) => {
         `SyntaxError Unexpected token - Expected ';' or ']'" but got "${program[0]}"`,
         expr
       );
-      if (!State.isInteractive)
-        throw new SyntaxError(
-          `Unexpected token - Expected ';' or ']'" but got "${program[0]}"`,
-          expr
-        );
+      throw new SyntaxError(
+        `Unexpected token - Expected ';' or ']'" but got "${program[0]}"`,
+        expr
+      );
     }
   }
   if (expr.operator.name === '|>') {
@@ -140,8 +138,7 @@ export const parseExpression = program => {
   } else {
     const snapshot = prettier(program.split('];')[0].split(']')[0]).trim();
     printErrors(`SyntaxError Unexpect syntax: "${snapshot}"`);
-    if (!State.isInteractive)
-      throw new SyntaxError(`Unexpect syntax: "${snapshot}"`);
+    throw new SyntaxError(`Unexpect syntax: "${snapshot}"`);
   }
   return parseApply(expr, program.slice(match[0].length));
 };
@@ -150,8 +147,7 @@ export const parse = program => {
   const result = parseExpression(program);
   if (result.rest.length > 0) {
     printErrors('SyntaxError Unexpected text after program');
-    if (!State.isInteractive)
-      throw new SyntaxError('Unexpected text after program');
+    throw new SyntaxError('Unexpected text after program');
   }
   return result.expr;
 };

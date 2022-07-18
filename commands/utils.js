@@ -1,10 +1,28 @@
 import { cell } from '../core/parser.js';
 import { editor } from '../main.js';
-import { STD, deps, print, protolessModule } from '../extentions/extentions.js';
-import { consoleElement, mainContainer } from '../main.js';
+import {
+  STD,
+  deps,
+  consoleElement,
+  print,
+  compositionContainer,
+  mainContainer,
+  canvasContainer,
+  protolessModule,
+  alertIcon,
+  errorIcon
+} from '../extentions/extentions.js';
 import { tokens } from '../core/tokens.js';
+import { execute } from './exec.js';
 
-export const getUserId = () => State.userId ?? localStorage.getItem('userId');
+export const API = 'http://localhost:8077';
+// export const API = 'https://hyper-light.herokuapp.com';
+export const getUserId = () => {
+  if (!State.userId) {
+    State.userId = localStorage.getItem('userId') ?? null;
+  }
+  return State.userId;
+};
 
 export const State = {
   list: {},
@@ -14,9 +32,16 @@ export const State = {
   AST: {},
   activeWindow: null,
   comments: null,
+  lastComposition: null,
+  isLogged: false,
   isFullScreen: false,
+  canvasHeight: 253,
   isErrored: true,
-  height: window.innerHeight - 45,
+  isAtTheBottom: true,
+  latestCurrentPage: 0,
+  currentCollection: null,
+  sceneHeight: 250,
+  height: window.innerHeight - 62,
   stash: { liveSession: '' }
 };
 const dfs = ast => {
@@ -38,12 +63,17 @@ const dfs = ast => {
   }
   return out;
 };
-export const onError = err => err;
+export const onError = err => {
+  droneIntel(errorIcon);
+};
 export const printErrors = (errors, args) => {
   if (!State.isErrored) {
     consoleElement.classList.remove('info_line');
     consoleElement.classList.add('error_line');
     State.isErrored = true;
+    onError();
+    canvasContainer.innerHTML = `<img src="./assets/images/404.svg" height="250" width="100%" />`;
+
     if (
       errors?.message &&
       (errors.message.includes('Maximum call stack size exceeded') ||
@@ -60,6 +90,10 @@ export const printErrors = (errors, args) => {
     }
   }
 };
+export const removeNoCode = source =>
+  source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '');
+export const wrapInBody = source => `=>[${source}]`;
+
 // ${
 //   params
 //     ? params
@@ -68,10 +102,6 @@ export const printErrors = (errors, args) => {
 //     : ''
 // }
 //cell({ ...std })(`=>()`);
-export const removeNoCode = source =>
-  source.replace(/[ ]+(?=[^"]*(?:"[^"]*"[^"]*)*$)+|\n|\t|;;.+/g, '');
-export const wrapInBody = source => `=>[${source}]`;
-
 export const exe = source => {
   State.list = { ...STD, ...State.list };
   const ENV = protolessModule(State.list);
@@ -82,6 +112,7 @@ export const exe = source => {
     State.env = env;
     return result;
   } catch (err) {
+    canvasContainer.style.background = 'var(--background-primary)';
     consoleElement.classList.remove('info_line');
     consoleElement.classList.add('error_line');
     consoleElement.value = consoleElement.value.trim() || err + ' ';
@@ -104,6 +135,7 @@ export const printSelection = (selection, source) => {
   // editor.replaceSelection(selection);
   // }
 };
+
 // export const stashComments = str => {
 //   State.comments = str.match(/;;.+/g);
 //   return str.replace(/;;.+/g, '##');
@@ -199,10 +231,17 @@ export const depResolution = source => {
   return List;
 };
 
+export const droneIntel = icon => {
+  icon.style.visibility = 'visible';
+  setTimeout(() => {
+    icon.style.visibility = 'hidden';
+  }, 500);
+};
 export const run = () => {
   State.isErrored = false;
   consoleElement.classList.add('info_line');
   consoleElement.classList.remove('error_line');
+
   consoleElement.value = '';
   // const cursor = editor.getCursor();
   const source = editor.getValue().trim();
@@ -213,11 +252,12 @@ export const run = () => {
     // const formatted = prettier(source); //revertComment(pr...)
     // const selection = editor.getSelection();
     // if (selection) {
-    // printSelection(selection, cursor, source.length, sourceCode);
-    // printSelection(selection, sourceCode);
-    // editor.setValue(formatted);
+    //   printSelection(selection, sourceCode);
+    //   // editor.setValue(formatted);
     // } else {
     print(exe(sourceCode));
+    if (!State.isErrored) droneIntel(alertIcon);
+
     // if (formatted !== source) {
     //   editor.setValue(formatted);
     // }
@@ -232,9 +272,102 @@ export const run = () => {
   }
 };
 
-export const newComp = () => {
-  const comp = document.createElement('div');
+// export const fromBase64 = (str, params) => {
+//   decode(
+//     LZUTF8.decompress(str, {
+//       inputEncoding: 'Base64',
+//       outputEncoding: 'String'
+//     }).trim(),
+//     source => {
+//       exe(source, params);
+//     }
+//   );
+// };
+// export const fromCompressed = (str, params) => {
+//   decode(str, source => {
+//     exe(source, params);
+//   });
+// };
+// export const fromCode = (str, params) => {
+//   decode(str, source => {
+//     exe(source, params);
+//   });
+// };
+
+const editCompositionEvent = (element, data) => {
+  if (State.lastComposition) {
+    mainContainer.parentNode.replaceChild(State.lastComposition, mainContainer);
+  }
+  if (data) {
+    const decoded = LZUTF8.decompress(data, {
+      inputEncoding: 'Base64',
+      outputEncoding: 'String'
+    });
+    editor.setValue(decoded);
+  }
+  State.lastComposition = element;
+  element.parentNode.replaceChild(mainContainer, element);
   mainContainer.style.display = 'block';
+  editor.setSize(
+    mainContainer.getBoundingClientRect().width,
+    mainContainer.getBoundingClientRect().height - 40
+  );
+  mainContainer.style.marginBottom =
+    mainContainer.getBoundingClientRect().height + 'px';
+};
+
+export const mediumPassRegex = new RegExp(
+  '((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))'
+);
+export const generateRandomColorHex = () => {
+  return (
+    '00000' + Math.floor(Math.random() * Math.pow(16, 6)).toString(16)
+  ).slice(-6);
+};
+export const createComposition = userId => {
+  if (userId) {
+    const comp = document.createElement('div');
+    comp.classList.add('composition');
+    comp.setAttribute('userId', userId);
+
+    const editComp = async e => {
+      const name = comp.getAttribute('name');
+      canvasContainer.innerHTML = `<img src="./assets/images/404.svg" height="250" width="100%" />`;
+      canvasContainer.style.background = 'var(--background-primary)';
+
+      // editor.setValue('');
+      canvasContainer.innerHTML = `<img  src="./assets/images/404.svg" height="250" width="100%" />`;
+      editCompositionEvent(comp);
+      // consoleElement.style.height = '50px';
+    };
+    // const full = document.createElement('button');
+    // full.classList.add('header-button');
+    // full.classList.add('full-screen-button');
+    // full.addEventListener('click', async () => {
+    //   await editComp();
+    //   await execute({ value: 'FULLSCREEN' });
+    //   window.dispatchEvent(new Event('resize'));
+    //   execute({ value: 'RUN' });
+    // });
+    // compositionContainer.appendChild(full);
+    // full.innerHTML = '`<img src="./assets/images/full-screen.svg"  />';
+    comp.addEventListener('click', editComp);
+    compositionContainer.appendChild(comp);
+    return comp;
+  }
+};
+export const loadCompositions = () => execute({ value: 'FIND .' });
+
+export const newComp = (userId = 'Unknown user') => {
+  const comp = createComposition(userId);
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth'
+  });
+  if (State.lastComposition) {
+    mainContainer.parentNode.replaceChild(State.lastComposition, mainContainer);
+    State.lastComposition = null;
+  }
   return comp;
 };
 
@@ -276,3 +409,5 @@ export const resizer = (resizer, mousemove, cursor) => {
     );
   };
 };
+
+// const canvasContainer = document.getElementById('avatar-container');

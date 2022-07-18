@@ -1,5 +1,26 @@
 import { VOID } from '../core/tokens.js';
-import { consoleElement } from '../main.js';
+import { HyperList } from './list.js';
+export const consoleElement = document.getElementById('console');
+export const editorContainer = document.getElementById('editor-container');
+export const canvasContainer = document.getElementById('canvas-container');
+export const mainContainer = document.getElementById('main-container');
+export const focusButton = document.getElementById('focus-button');
+export const appButton = document.getElementById('app-button');
+// export const helpButton = document.getElementById('help');
+// export const featuredButton = document.getElementById('featured');
+// export const keyButton = document.getElementById('key');
+export const headerContainer = document.getElementById('header');
+export const fullRunButton = document.getElementById('full-run');
+export const nextButton = document.getElementById('next');
+// export const exitFullButton = document.getElementById('exit-full');
+export const editorResizerElement = document.getElementById('editor-resizer');
+export const consoleResizerElement = document.getElementById('console-resizer');
+export const dowloadButton = document.getElementById('download');
+export const alertIcon = document.getElementById('alert');
+export const errorIcon = document.getElementById('error');
+export const compositionContainer = document.getElementById(
+  'composition-container'
+);
 const prefixDep = (dep, prefix = '') =>
   prefix
     ? Object.entries(dep).reduce((acc, [key, value]) => {
@@ -36,20 +57,18 @@ const object = {
   // get: (entity, prop) => entity[prop] ?? VOID
 };
 const array = {
-  makeArray: (...args) => args,
-
-  matrix: (...dimensions) => {
+  makeArray: (...items) => items,
+  makeMatrix: (...dimensions) => {
     if (dimensions.length > 0) {
       const dim = dimensions[0];
       const rest = dimensions.slice(1);
       const arr = [];
-      for (let i = 0; i < dim; i++) arr[i] = array.matrix(...rest);
+      for (let i = 0; i < dim; i++) arr[i] = array.makeMatrix(...rest);
       return arr;
     } else {
       return VOID;
     }
   },
-  lambda: callback => x => callback(x),
   indexedIteration: (entity, fn) =>
     entity.forEach((x, i, arr) => fn(i)) ?? VOID,
   forOf: (entity, fn) => entity.forEach((x, i, arr) => fn(x)) ?? VOID,
@@ -139,7 +158,7 @@ const operations = protolessModule({
   ['<']: (first, ...args) => +args.every(x => first < x),
   ['>=']: (first, ...args) => +args.every(x => first >= x),
   ['<=']: (first, ...args) => +args.every(x => first <= x),
-  ['%']: (left, right) => ((left % right) + right) % right,
+  ['%']: (left, right) => left % right,
   ['**']: (left, right) => left ** (right ?? 2)
 });
 
@@ -199,6 +218,22 @@ const isEqual = (a, b) => {
   }
 };
 
+export const colors = {
+  makeRgbColor: (r, g, b) => `rgb(${r}, ${g}, ${b})`,
+  makeRgbAlphaColor: (r, g, b, a = 1) => `rgba(${r}, ${g}, ${b}, ${a})`,
+  randomColor: () => `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+  randomLightColor: () =>
+    '#' +
+    ('00000' + Math.floor(Math.random() * Math.pow(16, 6)).toString(16)).slice(
+      -6
+    ),
+  invertColor: hex =>
+    '#' +
+    (Number(`0x1${hex.split('#')[1]}`) ^ 0xffffff)
+      .toString(16)
+      .substr(1)
+      .toUpperCase()
+};
 const list = {
   node: prev => next => ({ prev, next }),
   prev: n => n.prev,
@@ -225,6 +260,188 @@ const list = {
   }
 };
 
+const DOM = {
+  // noCanvas: () => (canvasContainer.innerHTML = ''),
+  makeUserInterface: () => {
+    canvasContainer.innerHTML = '';
+    const el = document.getElementById('_user-interface');
+    if (!el) {
+      const div = document.createElement('div');
+      div.id = '_user-interface';
+      const styles = document.createElement('style');
+      styles.textContent = `
+      ._user-interface-tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      
+      ._user-interface-tooltip ._user-interface-tooltiptext {
+        visibility: hidden;
+        width: 140px;
+        background-color: #5c5fb8;
+        font-weight: 900;
+        text-align: center;
+        border-radius: 2px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -75px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      ._user-interface-tooltip ._user-interface-tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #5c5fb8 transparent transparent transparent;
+      }
+      ._user-interface-button {
+        padding: 10px;
+        cursor: pointer;
+      }
+      ._user-interface-button, ._user-interface-p, ._user-interface-span, ._user-interface-textarea, ._user-interface-input {
+        color: #F4F4F4; 
+        background:transparent;
+      }
+      ._user-interface-button, ._user-interface-textarea, ._user-interface-input {
+        border: 1px solid #546a90;
+      }
+      ._user-interface-tooltip:hover ._user-interface-tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }`;
+      canvasContainer.appendChild(styles);
+      canvasContainer.appendChild(div);
+      div.style = 'max-height: 250px; height: 250px; overflow:"scroll';
+      events.userInterface = div;
+    }
+  },
+  makeInput: (width = '100px', height = '100px', settings) => {
+    const element = document.createElement('input');
+    element.classList.add('_user-interface-input');
+    element.width = width;
+    element.height = height;
+    for (const setting in settings) {
+      element.setAttribute(setting, settings[setting]);
+    }
+    return element;
+  },
+  makeStyleTag: (...classes) => {
+    const styles = document.createElement('style');
+    styles.textContent = classes.join('\n');
+    return styles;
+  },
+  setAttributes: (entity, props) => {
+    for (const prop in props) {
+      entity.setAttribute(prop, props[prop]);
+    }
+    return entity;
+  },
+  makeClass: (name, attr) => {
+    let out = '';
+    for (const a in attr) {
+      out += `${a}: ${attr[a]};`;
+    }
+    return `._user-interface-${name} {\n${out}\n}`;
+  },
+  makeTextArea: settings => {
+    const element = document.createElement('textarea');
+    element.classList.add('_user-interface-textarea');
+    for (const setting in settings) {
+      element.setAttribute(setting, settings[setting]);
+    }
+    return element;
+  },
+  makeSlider: settings => {
+    const element = document.createElement('input');
+    element.type = 'range';
+    element.classList.add('_user-interface-slider');
+
+    for (const setting in settings) {
+      element.setAttribute(setting, settings[setting]);
+    }
+    return element;
+  },
+  copyFromElement: copyElement => {
+    copyElement.select();
+    copyElement.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyElement.value);
+  },
+  copyFromText: val => {
+    console.log(val);
+    navigator.clipboard.writeText(val);
+  },
+  makeTooltip: defaultLabel => {
+    const tooltip = document.createElement('span');
+    tooltip.classList.add('_user-interface-tooltiptext');
+    tooltip.textContent = defaultLabel;
+    return tooltip;
+  },
+  makeButton: () => {
+    const element = document.createElement('button');
+    element.classList.add('_user-interface-button');
+    return element;
+  },
+  makeLabel: (element, label) => {
+    element.textContent = label;
+    return element;
+  },
+  onChange: (element, callback) => {
+    element.addEventListener('change', callback);
+    return element;
+  },
+  onClick: (element, callback) => {
+    element.addEventListener('click', callback);
+    return element;
+  },
+  makeParagraph: content => {
+    const element = document.createElement('p');
+    element.textContent = content;
+    return element;
+  },
+  makeSpan: content => {
+    const element = document.createElement('span');
+    element.textContent = content;
+    element.classList.add('_user-interface-span');
+    return element;
+  },
+  makeStyle: (element, style) => {
+    element.style = style;
+    return element;
+  },
+  makeContainer: (...elements) => {
+    const div = document.createElement('div');
+    elements.forEach(element => div.appendChild(element));
+    events.userInterface.appendChild(div);
+    return div;
+  },
+  addClass: (element, ...classlist) => {
+    classlist.forEach(cls => element.classList.add('_user-interface-' + cls));
+    return element;
+  },
+  insertIntoContainer: (container, ...elements) => {
+    elements.forEach(element => container.appendChild(element));
+    return container;
+  },
+  removeSelfFromContainer: (...elements) =>
+    elements.forEach(element => element.parentNode.removeChild(element))
+};
+
+const style = {
+  makeStyle: (entity, props) => {
+    for (const prop in props) {
+      entity.style[prop] = props[prop];
+    }
+    return entity;
+  }
+};
 const iterators = {
   generator: function* (entity = [], index = 0) {
     while (true) {
@@ -318,11 +535,12 @@ const SetCollection = {
     return out;
   },
   clear: entity => entity.clear(),
-  toArray: entity => [...entity],
   fromArray: (...array) => new Set(...array),
+  toArray: entity => [...entity],
   size: entity => entity.size
 };
 const time = {
+  makeDate: date => new Date(date),
   currentTime: () => new Date().getTime(),
   currentDate: () => new Date(),
   getHour: date => date.getHours(),
@@ -349,58 +567,163 @@ export const STD = {
   ...bitwise,
   ...operations
 };
+const events = {
+  events: {},
+  makeEvent: (entity, type, callback) => {
+    entity.renderer.elem.addEventListener(type, callback);
+  },
+  click: (entity, callback) => {
+    entity.renderer.elem.addEventListener('click', callback);
+  },
+  keyDown: callback =>
+    void (events.events['keydown'] = e => callback(e)) ??
+    window.addEventListener('keydown', events.events['keydown']),
+  keyUp: callback =>
+    void (events.events['keyup'] = e => callback(e)) ??
+    window.addEventListener('keyup', events.events['keyup'])
+};
+const math = {
+  mod: (left, right) => ((left % right) + right) % right,
+  clamp: (num, min, max) => Math.min(Math.max(num, min), max),
+  sqrt: num => Math.sqrt(num),
+  add: (a, b) => a + b,
+  sub: (a, b) => a - b,
+  mult: (a, b) => a * b,
+  pow: (a, b) => a ** b,
+  divide: (a, b) => a / b,
+  sign: n => Math.sign(n),
+  trunc: n => Math.trunc(n),
+  exp: n => Math.exp(n),
+  floor: n => Math.floor(n),
+  round: n => Math.round(n),
+  random: () => Math.random(),
+  dice: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
+  max: (...args) => Math.max(...args),
+  min: (...args) => Math.min(...args),
+  sin: n => Math.sin(n),
+  cos: n => Math.cos(n),
+  tan: n => Math.tan(n),
+  atan: n => Math.atan(n),
+  atan2: (y, x) => Math.atan2(y, x),
+  log10: x => Math.log10(x),
+  log2: x => Math.log2(x),
+  log: x => Math.log(x),
+  sum: arr => arr.reduce((acc, item) => (acc += item), 0),
+  minInt: Number.MIN_SAFE_INTEGER,
+  maxInt: Number.MAX_SAFE_INTEGER,
+  infinity: Number.POSITIVE_INFINITY,
+  PI: Math.PI,
+  parseInt: (number, base) => parseInt(number.toString(), base),
+  toNumber: string => Number(string)
+};
+const request = {
+  maybeJson: (url, callback) =>
+    fetch(url)
+      .then(res => res.json())
+      .then(res => callback(res, VOID))
+      .catch(err => callback(VOID, err)),
+  maybeText: (url, callback) =>
+    fetch(url)
+      .then(res => res.json())
+      .then(res => callback(res, VOID))
+      .catch(err => callback(VOID, err))
+};
+const HL = {
+  makeHyperList: (...items) => new HyperList(items),
+  mutex: (entity, fn) => entity.mapMut(fn),
+  toArray: entity => entity.toArray(),
+  map: (entity, fn) => entity.map(fn),
+  filter: (entity, fn) => entity.filter(fn),
+  every: (entity, fn) => entity.every(fn),
+  some: (entity, fn) => entity.some(fn),
+  find: (entity, fn) => entity.find(fn) ?? VOID,
+  findIndex: (entity, fn) => entity.findIndex(fn),
+  at: (entity, index) => entity.at(index) ?? VOID,
+  join: (entity, separator) => entity.join(separator),
+  unique: entity => {
+    const set = new Set();
+    return HyperList.from(
+      entity.reduce((acc, item) => {
+        if (!set.has(item)) {
+          set.add(item);
+          acc.push(item);
+        }
+        return acc;
+      }, [])
+    );
+  },
+  tail: entity => {
+    entity.shift();
+    return entity;
+  },
+  rotate: (entity, n, direction) => {
+    entity.rotate(n, direction);
+    return entity;
+  },
+  balance: entity => {
+    entity.balance();
+    return entity;
+  },
+  append: (entity, item) => {
+    entity._addToRight(item);
+    return entity;
+  },
 
+  prepend: (entity, item) => {
+    entity._addToLeft(item);
+    return entity;
+  },
+  empty: entity => {
+    entity.clear();
+    return entity;
+  },
+  reverse: entity => entity.reverse(),
+  reduce: (entity, fn, initial) => entity.reduce(fn, initial),
+  from: data => HyperList.from(data),
+  sort: (entity, fn) => entity.sort(fn),
+  last: entity => entity.get(entity.size - 1),
+  first: entity => entity.get(0),
+  pivot: entity => entity.pivot(),
+
+  isHyperList: entity => +entity.isHyperList(),
+  includes: (entity, arg) => +entity.includes(arg),
+  splice: (entity, ...args) => entity.splice(...args),
+  sum: entity => entity.reduce((acc, x) => (acc += x), 0),
+  for: (entity, fn) => {
+    entity.forEach((x, i) => fn(x, i));
+    return entity;
+  },
+  each: (entity, fn) => {
+    entity.forEach(fn);
+    return entity;
+  },
+  range: (start, end, step = 1) => {
+    const arr = new HyperList();
+    if (start > end) {
+      for (let i = start; i >= end; i -= 1) {
+        arr.push(i * step);
+      }
+    } else {
+      for (let i = start; i <= end; i += 1) {
+        arr.push(i * step);
+      }
+    }
+    arr.balance();
+    return arr;
+  },
+  slice: (entity, ...args) => entity.slice(...args)
+};
+export const store = {};
 export const deps = {
+  ...prefixDep(style, 'STYLE'),
+  ...prefixDep(DOM, 'DOM'),
+  ...prefixDep({ io: key => store[key] }, 'IO'),
+  ...prefixDep(HL, 'HYPERLIST'),
   ...prefixDep(time, 'TIME'),
   ...prefixDep(list, 'LIST'),
   ...prefixDep(array, 'ARRAY'),
-  ...prefixDep(
-    {
-      panic: message => {
-        throw new Error(message);
-      }
-    },
-    'ERROR'
-  ),
   ...prefixDep(SetCollection, 'SET'),
-  ...prefixDep(
-    {
-      clamp: (num, min, max) => Math.min(Math.max(num, min), max),
-      sqrt: num => Math.sqrt(num),
-      add: (a, b) => a + b,
-      sub: (a, b) => a - b,
-      mult: (a, b) => a * b,
-      pow: (a, b) => a ** b,
-      divide: (a, b) => a / b,
-      sign: n => Math.sign(n),
-      trunc: n => Math.trunc(n),
-      exp: n => Math.exp(n),
-      floor: n => Math.floor(n),
-      round: n => Math.round(n),
-      random: () => Math.random(),
-      dice: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),
-      max: (...args) => Math.max(...args),
-      min: (...args) => Math.min(...args),
-      sin: n => Math.sin(n),
-      cos: n => Math.cos(n),
-      tan: n => Math.tan(n),
-      atan: n => Math.atan(n),
-      atan2: (y, x) => Math.atan2(y, x),
-      log10: x => Math.log10(x),
-      log2: x => Math.log2(x),
-      log: x => Math.log(x),
-      sum: arr => arr.reduce((acc, item) => (acc += item), 0),
-      minInt: Number.MIN_SAFE_INTEGER,
-      maxInt: Number.MAX_SAFE_INTEGER,
-      infinity: Number.POSITIVE_INFINITY,
-      PI: Math.PI,
-      numberToBinary: number => number.toString(2),
-      parseInt: (number, base) => parseInt(number.toString(), base),
-      toNumber: string => Number(string)
-    },
-    'MATH'
-  ),
-
+  ...prefixDep(math, 'MATH'),
   ...prefixDep(
     {
       print,
@@ -420,6 +743,7 @@ export const deps = {
       trim: string => string.trim(),
       trimStart: string => string.trimStart(),
       trimEnd: string => string.trimEnd(),
+      replace: (string, match, replace) => string.replace(match, replace),
       sp: ' '
     },
     'STRING'
@@ -427,15 +751,21 @@ export const deps = {
   ...prefixDep(object, 'OBJECT'),
   ...prefixDep(
     {
-      isEqual,
-      isSimilar,
+      isEqual: isEqual,
+      isSimilar: isSimilar,
       isDefined: item => (item === VOID ? 0 : 1),
       isUndefined: item => (item === VOID ? 1 : 0),
-      boolean: item => Boolean(item),
+      makeBoolean: item => Boolean(item),
+      isEmpty: item => (Object.keys(item).length === 0 ? 1 : 0),
+      true: 1,
+      false: 0,
+      isHaving: (obj, ...props) => +props.every(x => x in obj),
       areEqual: (item, ...args) =>
         +args.every(current => isEqual(item, current))
     },
     'LOGIC'
   ),
-  ...prefixDep(iterators, 'LOOP')
+  ...prefixDep(iterators, 'LOOP'),
+  ...prefixDep(colors, 'COLOR'),
+  ...prefixDep(request, 'REQUEST')
 };

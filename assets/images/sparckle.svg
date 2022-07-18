@@ -1,5 +1,1 @@
-<svg width="20" height="20" fill="#fbf5f3" viewBox="0 0 26 23"  xmlns="http://www.w3.org/2000/svg">
-<path d="M15 1.90735e-06L16.4779 9.52215L26 11L16.4779 12.4779L15 22L13.5221 12.4779L4 11L13.5221 9.52215L15 1.90735e-06Z" />
-<path d="M5 13L5.67175 17.3282L10 18L5.67175 18.6718L5 23L4.32825 18.6718L0 18L4.32825 17.3282L5 13Z" />
-<path d="M8 1L8.40305 3.59695L11 4L8.40305 4.40305L8 7L7.59695 4.40305L5 4L7.59695 3.59695L8 1Z" />
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="20" height="20" style="overflow: hidden; background: transparent; border: none;"><defs></defs><g id="two-52" transform="matrix(1 0 0 1 0 0)" opacity="1"><g id="two-55" transform="matrix(0.6 0 0 0.6 10 5)" opacity="1"><path transform="matrix(1 0 0 1 0 20)" id="two-53" d="M -8.660255 5 L -0.000001 -10 L 8.660254 5 L -8.660255 4.999999 Z " fill="transparent" stroke="white" stroke-width="1" stroke-opacity="1" fill-opacity="1" visibility="visible" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"></path><path transform="matrix(-1 0 -0.000001 -1 0 0)" id="two-54" d="M -8.660255 5 L -0.000001 -10 L 8.660254 5 L -8.660255 4.999999 Z " fill="#fff" stroke="white" stroke-width="1" stroke-opacity="1" fill-opacity="1" visibility="visible" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"></path></g></g></svg>
