@@ -843,6 +843,8 @@ export const deps = {
   ...prefixDep(object, 'OBJECT'),
   ...prefixDep(
     {
+      isTrue: bol => +(!!bol === true),
+      isFalse: bol => +(!!bol === false),
       isEqual: isEqual,
       isSimilar: isSimilar,
       isDefined: item => (item === VOID ? 0 : 1),
