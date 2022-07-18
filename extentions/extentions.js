@@ -663,8 +663,8 @@ const HL = {
   toArray: entity => entity.toArray(),
   map: (entity, fn) => entity.map(fn),
   filter: (entity, fn) => entity.filter(fn),
-  every: (entity, fn) => entity.every(fn),
-  some: (entity, fn) => entity.some(fn),
+  every: (entity, fn) => +entity.every(fn),
+  some: (entity, fn) => +entity.some(fn),
   find: (entity, fn) => entity.find(fn) ?? VOID,
   findIndex: (entity, fn) => entity.findIndex(fn),
   at: (entity, index) => entity.at(index) ?? VOID,
@@ -768,6 +768,7 @@ const HL = {
     entity.clear();
     return entity;
   },
+  isEmpty: entity => +!entity.size,
   reverse: entity => entity.reverse(),
   reduce: (entity, fn, initial) => entity.reduce(fn, initial),
   from: data => HyperList.from(data),
@@ -850,6 +851,7 @@ export const deps = {
       isEmpty: item => (Object.keys(item).length === 0 ? 1 : 0),
       true: 1,
       false: 0,
+      invert: val => +!val,
       isHaving: (obj, ...props) => +props.every(x => x in obj),
       areEqual: (item, ...args) =>
         +args.every(current => isEqual(item, current))
