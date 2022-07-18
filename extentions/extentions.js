@@ -69,6 +69,27 @@ const array = {
       return VOID;
     }
   },
+  unique: entity => {
+    const set = new Set();
+    return entity.reduce((acc, item) => {
+      if (!set.has(item)) {
+        set.add(item);
+        acc.push(item);
+      }
+      return acc;
+    }, []);
+  },
+  partition: (entity, groups = 1) =>
+    entity.reduce((acc, _, index, arr) => {
+      if (index % groups === 0) {
+        const part = [];
+        for (let i = 0; i < groups; i++) {
+          part.push(arr[index + i]);
+        }
+        acc.push(part);
+      }
+      return acc;
+    }, []),
   indexedIteration: (entity, fn) =>
     entity.forEach((x, i, arr) => fn(i)) ?? VOID,
   forOf: (entity, fn) => entity.forEach((x, i, arr) => fn(x)) ?? VOID,
@@ -78,6 +99,14 @@ const array = {
     for (let i = 0; i < entity.length; i++) {
       entity[i] = callback(entity[i], i, entity);
     }
+    return entity;
+  },
+  tail: entity => {
+    entity.shift();
+    return entity;
+  },
+  head: entity => {
+    entity.pop();
     return entity;
   },
   map: (entity, callback) => entity.map(callback),
@@ -493,6 +522,7 @@ const iterators = {
 };
 
 const SetCollection = {
+  from: arr => new Set(arr),
   makeSet: (...args) => new Set(args),
   has: (entity, item) => +entity.has(item),
   add: (entity, ...values) => {
@@ -523,7 +553,6 @@ const SetCollection = {
     });
     return out;
   },
-
   symetricDifference: (a, b) => {
     const out = new Set();
     b.forEach(item => {
@@ -640,6 +669,64 @@ const HL = {
   findIndex: (entity, fn) => entity.findIndex(fn),
   at: (entity, index) => entity.at(index) ?? VOID,
   join: (entity, separator) => entity.join(separator),
+  union: (a, b) => {
+    const out = new HyperList();
+    const A = new Set(a.toArray());
+    const B = new Set(b.toArray());
+    A.forEach(item => out.push(item));
+    B.forEach(item => out.push(item));
+    out.balance();
+    return out;
+  },
+  symetricDifference: (a, b) => {
+    const out = new HyperList();
+    const A = new Set(a.toArray());
+    const B = new Set(b.toArray());
+    B.forEach(item => {
+      if (!A.has(item)) out.push(item);
+    });
+    A.forEach(item => {
+      if (!B.has(item)) out.push(item);
+    });
+    out.balance();
+    return out;
+  },
+  intersection: (a, b) => {
+    const out = new HyperList();
+    const A = new Set(a.toArray());
+    const B = new Set(b.toArray());
+    B.forEach(item => {
+      if (A.has(item)) out.push(item);
+    });
+    out.balance();
+    return out;
+  },
+  difference: (a, b) => {
+    const out = new HyperList();
+    const A = new Set(a.toArray());
+    const B = new Set(b.toArray());
+    A.forEach(item => {
+      if (!B.has(item)) out.push(item);
+    });
+    out.balance();
+    return out;
+  },
+  partition: (entity, groups = 1) => {
+    const res = entity.reduce((acc, _, index, arr) => {
+      if (index % groups === 0) {
+        const part = new HyperList();
+        for (let i = 0; i < groups; i++) {
+          part.push(arr.get(index + i));
+        }
+        part.balance();
+        acc.push(part);
+      }
+      return acc;
+    }, new HyperList());
+    res.balance();
+    return res;
+  },
+  flat: (entity, level) => entity.flat(level),
   unique: entity => {
     const set = new Set();
     return HyperList.from(
@@ -654,6 +741,10 @@ const HL = {
   },
   tail: entity => {
     entity.shift();
+    return entity;
+  },
+  head: entity => {
+    entity.pop();
     return entity;
   },
   rotate: (entity, n, direction) => {
