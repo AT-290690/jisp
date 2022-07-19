@@ -662,6 +662,7 @@ const request = {
 };
 const HL = {
   sizeOf: entity => entity.size,
+  remake: (entity, fn) => entity.reduce(fn, new HyperList()),
   product: (a, b) => {
     const out = a.reduce((acc, item, i) => {
       acc._addToRight(new HyperList([item, b.get(i % b.size)]));
