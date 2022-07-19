@@ -84,7 +84,8 @@ const array = {
       if (index % groups === 0) {
         const part = [];
         for (let i = 0; i < groups; i++) {
-          part.push(arr[index + i]);
+          const current = arr[index + i];
+          if (current !== undefined) part.push(current);
         }
         acc.push(part);
       }
@@ -615,10 +616,12 @@ const math = {
   mod: (left, right) => ((left % right) + right) % right,
   clamp: (num, min, max) => Math.min(Math.max(num, min), max),
   sqrt: num => Math.sqrt(num),
+  inc: (a, i = 1) => (a += i),
   add: (a, b) => a + b,
   sub: (a, b) => a - b,
   mult: (a, b) => a * b,
   pow: (a, b) => a ** b,
+  pow2: a => a ** 2,
   divide: (a, b) => a / b,
   sign: n => Math.sign(n),
   trunc: n => Math.trunc(n),
@@ -659,8 +662,25 @@ const request = {
 };
 const HL = {
   makeHyperList: (...items) => new HyperList(items),
-  mutex: (entity, fn) => entity.mapMut(fn),
+  to: (entity, fn) => entity.mapMut(x => fn(x)),
+  mutmap: (entity, fn) => entity.mapMut(fn),
+  max: entity =>
+    entity.reduce((acc, item) => (item > acc ? (acc = item) : acc), -Infinity),
+  min: entity =>
+    entity.reduce((acc, item) => (item < acc ? (acc = item) : acc), Infinity),
   toArray: entity => entity.toArray(),
+  printHyperList: entity =>
+    HyperList.isHyperList(entity)
+      ? entity
+          .map(x =>
+            HyperList.isHyperList(x)
+              ? HyperList.isHyperList(x.get(0))
+                ? HL.printHyperList(x)
+                : x.toArray()
+              : x
+          )
+          .toArray()
+      : entity,
   map: (entity, fn) => entity.map(fn),
   filter: (entity, fn) => entity.filter(fn),
   every: (entity, fn) => +entity.every(fn),
@@ -716,7 +736,8 @@ const HL = {
       if (index % groups === 0) {
         const part = new HyperList();
         for (let i = 0; i < groups; i++) {
-          part.push(arr.get(index + i));
+          const current = arr.get(index + i);
+          if (current !== undefined) part.push(current);
         }
         part.balance();
         acc.push(part);
@@ -745,6 +766,14 @@ const HL = {
   },
   head: entity => {
     entity.pop();
+    return entity;
+  },
+  rotateRight: (entity, n) => {
+    entity.rotateRight(n);
+    return entity;
+  },
+  rotateLeft: (entity, n) => {
+    entity.rotateLeft(n);
     return entity;
   },
   rotate: (entity, n, direction) => {
@@ -776,8 +805,7 @@ const HL = {
   last: entity => entity.get(entity.size - 1),
   first: entity => entity.get(0),
   pivot: entity => entity.pivot(),
-
-  isHyperList: entity => +entity.isHyperList(),
+  isHyperList: entity => +HyperList.isHyperList(entity),
   includes: (entity, arg) => +entity.includes(arg),
   splice: (entity, ...args) => entity.splice(...args),
   sum: entity => entity.reduce((acc, x) => (acc += x), 0),
@@ -847,8 +875,8 @@ export const deps = {
       isFalse: bol => +(!!bol === false),
       isEqual: isEqual,
       isSimilar: isSimilar,
-      isDefined: item => (item === VOID ? 0 : 1),
-      isUndefined: item => (item === VOID ? 1 : 0),
+      isNotVoid: item => (item === VOID ? 0 : 1),
+      isVoid: item => (item === VOID ? 1 : 0),
       makeBoolean: item => Boolean(item),
       isEmpty: item => (Object.keys(item).length === 0 ? 1 : 0),
       true: 1,

@@ -56,21 +56,6 @@ textarea {
 }
 
 @font-face {
-  font-family: 'Hermit';
-  src: url(assets/fonts/Hermit-Bold.otf) format('opentype');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Drifter';
-  src: url(assets/fonts/DrifterMono.ttf) format('opentype');
-  font-display: swap;
-}
-@font-face {
-  font-family: 'BabyDoll';
-  src: url(assets/fonts/BabyDoll.ttf) format('truetype');
-  font-display: swap;
-}
-@font-face {
   font-family: 'Fanta';
   src: url(assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
   font-display: swap;

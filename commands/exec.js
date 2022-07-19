@@ -518,7 +518,6 @@ export const execute = async CONSOLE => {
       break;
 
     case 'RUN':
-    case 'SAVE':
       run();
       consoleElement.value = '';
       break;
@@ -863,29 +862,32 @@ ${tco}\n${pipe}\n${curry}\n${spread}\n${is_equal}\n
       a.click();
       window.URL.revokeObjectURL(a.href);
       break;
-    case 'FONT':
+    case 'LIST':
+      editor.setValue(Object.keys(window.localStorage).join('\n'));
+      consoleElement.value = '';
+      break;
+    case 'DELETE':
+      if (PARAMS[0]) window.localStorage.removeItem(PARAMS[0]);
+      consoleElement.value = '';
+      break;
+    case 'SAVE':
+      if (PARAMS[0]) window.localStorage.setItem(PARAMS[0], editor.getValue());
+      consoleElement.value = '';
+      break;
+    case 'LOAD':
       {
-        document
-          .querySelector(':root')
-          .style.setProperty(
-            '--font-family',
-            ['Fanta', 'Hermit', 'BabyDoll', 'Drifter'][PARAMS[0] ?? 0]
-          );
-        localStorage.setItem('font', PARAMS[0] ?? 0);
+        if (PARAMS[0]) {
+          const file = window.localStorage.getItem(PARAMS[0]);
+          if (file) {
+            editor.setValue(file);
+            consoleElement.value = '';
+          } else printErrors(PARAMS[0] + ' file does not exist!');
+        }
       }
       break;
-    case '[]':
-      {
-        const value = editor
-          .getValue()
-          .replaceAll('(', '[')
-          .replaceAll(')', ']');
-        editor.setValue(value);
-      }
-      break;
-      // case 'APP':
-      //   window.open().document.write(await execute({ value: '_COMPILE' }));
-      break;
+    // case 'APP':
+    //   window.open().document.write(await execute({ value: '_COMPILE' }));
+    //break;
     case 'HELP':
       consoleElement.value = ` HELP: list these commands
  FULL: fullscreen

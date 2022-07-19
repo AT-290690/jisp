@@ -15,15 +15,6 @@ import {
 import { tokens } from '../core/tokens.js';
 import { execute } from './exec.js';
 
-export const API = 'http://localhost:8077';
-// export const API = 'https://hyper-light.herokuapp.com';
-export const getUserId = () => {
-  if (!State.userId) {
-    State.userId = localStorage.getItem('userId') ?? null;
-  }
-  return State.userId;
-};
-
 export const State = {
   list: {},
   env: null,
