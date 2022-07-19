@@ -661,6 +661,15 @@ const request = {
       .catch(err => callback(VOID, err))
 };
 const HL = {
+  sizeOf: entity => entity.size,
+  product: (a, b) => {
+    const out = a.reduce((acc, item, i) => {
+      acc._addToRight(new HyperList([item, b.get(i % b.size)]));
+      return acc;
+    }, new HyperList());
+    out.balance();
+    return out;
+  },
   makeHyperList: (...items) => new HyperList(items),
   to: (entity, fn) => entity.mapMut(x => fn(x)),
   mutmap: (entity, fn) => entity.mapMut(fn),
