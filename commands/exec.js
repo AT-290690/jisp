@@ -769,21 +769,6 @@ Upload your creations and share them with everyone!`;
         ignore.forEach(op => {
           delete deps[op];
         });
-        let standartLibrary = '{';
-        for (const f in deps) {
-          standartLibrary += `"${f}":{`;
-          for (const c in deps[f]) {
-            standartLibrary += `"${c}":`;
-            if (typeof deps[f][c] === 'function') {
-              standartLibrary += deps[f][c].toString().replace('VOID', 'null');
-            } else {
-              standartLibrary += JSON.stringify(deps[f][c]);
-            }
-            standartLibrary += ',';
-          }
-          standartLibrary += '},';
-        }
-        standartLibrary += '}';
 
         const { program, vars } = compileToJavaScript(AST);
         const tops = vars.length ? `var ${vars.join(',')};\n` : '';

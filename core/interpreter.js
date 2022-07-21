@@ -11,9 +11,10 @@ const evaluate = (expr, env) => {
         } else {
           throw new ReferenceError(`Undefined variable: ${expr.name}`);
         }
-      case 'apply':
-        if (expr.operator.type === 'word' && expr.operator.name in env.tokens) {
-          return env.tokens[expr.operator.name](expr.args, env);
+      case 'apply': {
+        const tokens = env[';;tokens'];
+        if (expr.operator.type === 'word' && expr.operator.name in tokens) {
+          return tokens[expr.operator.name](expr.args, env);
         }
 
         const op = evaluate(expr.operator, env);
@@ -26,6 +27,7 @@ const evaluate = (expr, env) => {
             return evaluate(arg, env);
           })
         );
+      }
     }
   } catch (err) {
     printErrors(err);

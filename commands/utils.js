@@ -96,7 +96,7 @@ export const wrapInBody = source => `=>[${source}]`;
 export const exe = source => {
   State.list = { ...STD, ...State.list };
   const ENV = protolessModule(State.list);
-  ENV.tokens = protolessModule(tokens);
+  ENV[';;tokens'] = protolessModule(tokens);
   try {
     const { result, AST, env } = cell(ENV)(wrapInBody(source));
     State.AST = AST;
