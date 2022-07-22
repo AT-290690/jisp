@@ -533,7 +533,7 @@ const SetCollection = {
   remove: (entity, ...values) => {
     values.forEach(x => entity.delete(x));
   },
-  in: (entity, callback) => entity.forEach((x, i, a) => callback(x)),
+  inside: (entity, callback) => entity.forEach((x, i, a) => callback(x)),
   union: (a, b) => {
     const out = new Set();
     a.forEach(item => out.add(item));
@@ -820,11 +820,11 @@ const HL = {
   includes: (entity, arg) => +entity.includes(arg),
   splice: (entity, ...args) => entity.splice(...args),
   sum: entity => entity.reduce((acc, x) => (acc += x), 0),
-  for: (entity, fn) => {
+  forOf: (entity, fn) => {
     entity.forEach((x, i) => fn(x, i));
     return entity;
   },
-  in: (entity, fn) => entity.forEach(x => fn(x)),
+  inside: (entity, fn) => entity.forEach(x => fn(x)),
   each: (entity, fn) => {
     entity.forEach(fn);
     return entity;
