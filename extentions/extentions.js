@@ -644,6 +644,7 @@ const math = {
   minInt: Number.MIN_SAFE_INTEGER,
   maxInt: Number.MAX_SAFE_INTEGER,
   infinity: Number.POSITIVE_INFINITY,
+  negative: n => -n,
   PI: Math.PI,
   parseInt: (number, base) => parseInt(number.toString(), base),
   toNumber: string => Number(string)
@@ -823,6 +824,7 @@ const HL = {
     entity.forEach((x, i) => fn(x, i));
     return entity;
   },
+  in: (entity, fn) => entity.forEach(x => fn(x)),
   each: (entity, fn) => {
     entity.forEach(fn);
     return entity;
@@ -888,6 +890,7 @@ export const deps = {
       isNotVoid: item => (item === VOID ? 0 : 1),
       isVoid: item => (item === VOID ? 1 : 0),
       makeBoolean: item => Boolean(item),
+      or: (entity, other) => entity || other,
       isEmpty: item => (Object.keys(item).length === 0 ? 1 : 0),
       true: 1,
       false: 0,
