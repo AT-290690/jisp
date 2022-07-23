@@ -670,6 +670,25 @@ const request = {
 };
 const HL = {
   sizeOf: entity => entity.size,
+  clone: entity =>
+    HyperList.isHyperList(entity)
+      ? new HyperList(
+          entity.map(x =>
+            HyperList.isHyperList(x)
+              ? HyperList.isHyperList(x.get(0))
+                ? HL.clone(x)
+                : new HyperList(x)
+              : x
+          )
+        )
+      : new HyperList(entity),
+  swap: (entity, a, b) => {
+    const A = entity.get(a);
+    const B = entity.get(b);
+    entity.set(a, B);
+    entity.set(b, A);
+    return entity;
+  },
   remake: (entity, fn) => entity.reduce(fn, new HyperList()),
   product: (a, b) => {
     const out = a.reduce((acc, item, i) => {

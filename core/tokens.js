@@ -544,15 +544,15 @@ const tokens = {
     );
   },
 
-  [':']: (args, env) => {
-    if (!args.length || (args[0].type !== 'apply' && args[0].type !== 'word')) {
-      printErrors('SyntaxError Invalid number of arguments to :', args);
-      throw new SyntaxError('Invalid number of arguments to :');
-    }
-    const [first, ...rest] = args;
-    const fn = evaluate(first, env);
-    return arg => fn(arg, ...rest.map(x => evaluate(x, env)));
-  },
+  // [':']: (args, env) => {
+  //   if (!args.length || (args[0].type !== 'apply' && args[0].type !== 'word')) {
+  //     printErrors('SyntaxError Invalid number of arguments to :', args);
+  //     throw new SyntaxError('Invalid number of arguments to :');
+  //   }
+  //   const [first, ...rest] = args;
+  //   const fn = evaluate(first, env);
+  //   return arg => fn(arg, ...rest.map(x => evaluate(x, env)));
+  // },
 
   ['<-']: (args, env) => exp =>
     args.forEach(arg => {

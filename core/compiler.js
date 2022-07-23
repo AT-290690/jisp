@@ -166,8 +166,8 @@ const dfs = (tree, locals) => {
         const [param, ...rest] = tree.args.map(x => dfs(x, locals));
         return `_pipe(${rest.join(',')})(${param});`;
       }
-      case ':':
-        return `_curry(${tree.args.map(x => dfs(x, locals)).join(',')});`;
+      // case ':':
+      //   return `_curry(${tree.args.map(x => dfs(x, locals)).join(',')});`;
       case '.': {
         const prop = [];
         for (let i = 1; i < tree.args.length; i++) {

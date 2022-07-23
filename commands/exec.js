@@ -468,7 +468,7 @@ const ba = `class HyperList {
 }
 `;
 const pipe = `var _pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);`;
-const curry = `var _curry = (fn, ...args) => (arg) => fn(arg, ...args);`;
+// const curry = `var _curry = (fn, ...args) => (arg) => fn(arg, ...args);`;
 const tco = `var _tco = func => (...args) => { let result = func(...args); while (typeof result === 'function') { result = result(); }; return result };`;
 const spread = `var _spread = (items) => Array.isArray(items[0]) ? items.reduce((acc, item) => [...acc, ...item], []) : items.reduce((acc, item) => ({ ...acc, ...item }), {});`;
 const is_equal = `var _isEqual = (a, b) => {const typeA = typeof a, typeB = typeof b; if (typeA !== typeB) return 0; if (typeA === 'number' || typeA === 'string' || typeA === 'boolean') { return +(a === b); } if (typeA === 'object') { const isArrayA = Array.isArray(a), isArrayB = Array.isArray(b); if (isArrayA !== isArrayB) return 0; if (isArrayA && isArrayB) { if (a.length !== b.length) return 0; return +a.every((item, index) => _isEqual(item, b[index])); } else { if (a === undefined || a === null || b === undefined || b === null) return +(a === b); if (Object.keys(a).length !== Object.keys(b).length) return 0; for (const key in a) { if (!_isEqual(a[key], b[key])) { return 0; }} return 1; }}}`;
@@ -827,7 +827,7 @@ var events = {};
 var store = ${JSON.stringify(window.store)};
 var mainContainer = document.getElementById("main-container");
 var canvasContainer = document.getElementById("canvas-container");
-${tco}\n${pipe}\n${curry}\n${spread}\n${is_equal}\n
+${tco}\n${pipe}\n${spread}\n${is_equal}\n
 ((STD)=>{${tops}${program}})(${standartLibrary})`;
         return `<head><title>Hyper Light SVG</title><style> body { background: ${color} }</style><head><body>  
         <div id="canvas-container"></div>
@@ -861,8 +861,9 @@ ${tco}\n${pipe}\n${curry}\n${spread}\n${is_equal}\n
       window.URL.revokeObjectURL(a.href);
       break;
     case 'LIST':
-      editor.setValue(Object.keys(window.localStorage).join('\n'));
-      consoleElement.value = '';
+      consoleElement.value = Object.keys(window.localStorage)
+        .map(x => 'LOAD ' + x)
+        .join('\n');
       break;
     case 'DELETE':
       if (PARAMS[0]) window.localStorage.removeItem(PARAMS[0]);
