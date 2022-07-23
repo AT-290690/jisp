@@ -33,7 +33,7 @@ focusButton.addEventListener('click', () => {
   }
 });
 
-fullRunButton.addEventListener('click', run);
+fullRunButton.addEventListener('click', () => run());
 // exitFullButton.addEventListener('click', async () => {
 //   await execute({ value: 'EXIT' });
 //   window.dispatchEvent(new Event('resize'));

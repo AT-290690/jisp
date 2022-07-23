@@ -358,24 +358,14 @@ const DOM = {
         border-style: solid;
         border-color: #5c5fb8 transparent transparent transparent;
       }
-      ._user-interface-button {
-        padding: 10px;
-        cursor: pointer;
-      }
-      ._user-interface-button, ._user-interface-p, ._user-interface-span, ._user-interface-textarea, ._user-interface-input {
-        color: #F4F4F4; 
-        background:transparent;
-      }
-      ._user-interface-button, ._user-interface-textarea, ._user-interface-input {
-        border: 1px solid #546a90;
-      }
+   
       ._user-interface-tooltip:hover ._user-interface-tooltiptext {
         visibility: visible;
         opacity: 1;
       }`;
       canvasContainer.appendChild(styles);
       canvasContainer.appendChild(div);
-      div.style = 'max-height: 250px; height: 250px; overflow:"scroll';
+      div.style = 'overflow:"scroll';
       events.userInterface = div;
     }
   },
