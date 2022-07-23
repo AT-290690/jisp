@@ -143,7 +143,8 @@ document.addEventListener('keydown', e => {
     e = e || window.event;
     e.preventDefault();
     e.stopPropagation();
-    run((localStorage.getItem('imports') ?? '') + editor.getValue());
+    // (localStorage.getItem('imports') ?? '')
+    run();
     localStorage.setItem('stash', editor.getValue());
   } else if (e.key === 'Enter') {
     if (activeElement === consoleElement) {

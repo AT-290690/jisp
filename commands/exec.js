@@ -701,7 +701,7 @@ Upload your creations and share them with everyone!`;
         window
           .open()
           .document.write(
-            `<head><title>Hyper Light SVG</title><style> body { background: ${color} }</style><head><body>${canvasContainer.innerHTML}</body>`
+            `<head><title>Hyper Light</title><style> body { background: ${color} }</style><head><body>${canvasContainer.innerHTML}</body>`
           );
       }
       break;
@@ -711,14 +711,63 @@ Upload your creations and share them with everyone!`;
         window
           .open()
           .document.write(
-            `<head><title>Hyper Light SVG</title><style> body { background: ${color} }</style><head><body>${canvasContainer.innerHTML}</body>`
+            `<head><title>Hyper Light</title><style> body { background: ${color} }</style><head><body>${canvasContainer.innerHTML}</body>`
           );
       }
       break;
     case 'C':
     case 'COMPILE':
       State.stashedValue = editor.getValue();
+
       editor.setValue(await execute({ value: '_COMPILE' }));
+      break;
+    case 'CR':
+      consoleElement.value = '';
+      State.stashedValue = editor.getValue();
+      {
+        const source = removeNoCode(editor.getValue());
+        const List = depResolution(source);
+        const { AST, env } = cell(
+          protolessModule({ ...STD, ...List }),
+          false
+        )(wrapInBody(source));
+        const ignore = [
+          ...['#', 'tco', 'void', 'VOID'],
+          ...['!', '^', '>>>', '>>', '<<', '~', '|', '&'],
+          ...['+', '-', '*', '/', '==', '!=', '>', '<', '>=', '<=', '%', '**']
+        ];
+        const deps = env;
+        ignore.forEach(op => {
+          delete deps[op];
+        });
+        let standartLibrary = '{';
+        for (const f in deps) {
+          standartLibrary += `"${f}":{`;
+          for (const c in deps[f]) {
+            standartLibrary += `"${c}":`;
+            if (typeof deps[f][c] === 'function') {
+              standartLibrary += deps[f][c].toString().replace('VOID', 'null');
+            } else {
+              standartLibrary += JSON.stringify(deps[f][c]);
+            }
+            standartLibrary += ',';
+          }
+          standartLibrary += '},';
+        }
+        standartLibrary += '}';
+        const { program, vars } = compileToJavaScript(AST);
+        const tops = vars.length ? `var ${vars.join(',')};\n` : '';
+        const script = `${'HYPERLIST' in deps ? ba : ''};
+        var events = {};
+        var store = ${JSON.stringify(window.store)};
+        var mainContainer = document.getElementById("main-container");
+        var canvasContainer = document.getElementById("canvas-container");
+        ${tco}\n${pipe}\n${spread}\n${is_equal}\n
+        globalThis.resultat = ((STD)=>{${tops}; return ${program}})(${standartLibrary})`;
+        new Function(script)();
+        consoleElement.value = globalThis.resultat;
+        delete globalThis.resultat;
+      }
       break;
     case 'JS':
       {
@@ -796,7 +845,7 @@ var mainContainer = document.getElementById("main-container");
 var canvasContainer = document.getElementById("canvas-container");
 ${tco}\n${pipe}\n${spread}\n${is_equal}\n
 ((STD)=>{${tops}${program}})(${standartLibrary})`;
-        return `<head><title>Hyper Light SVG</title><style> body { background: ${color} }</style><head><body>  
+        return `<head><title>Hyper Light</title><style> body { background: ${color} }</style><head><body>  
         <div id="canvas-container"></div>
         <div id="main-container">
         </div>

@@ -325,44 +325,7 @@ const DOM = {
       const div = document.createElement('div');
       div.id = '_user-interface';
       const styles = document.createElement('style');
-      styles.textContent = `
-      ._user-interface-tooltip {
-        position: relative;
-        display: inline-block;
-      }
-      
-      ._user-interface-tooltip ._user-interface-tooltiptext {
-        visibility: hidden;
-        width: 140px;
-        background-color: #5c5fb8;
-        font-weight: 900;
-        text-align: center;
-        border-radius: 2px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        bottom: 150%;
-        left: 50%;
-        margin-left: -75px;
-        opacity: 0;
-        transition: opacity 0.3s;
-      }
-      
-      ._user-interface-tooltip ._user-interface-tooltiptext::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #5c5fb8 transparent transparent transparent;
-      }
-   
-      ._user-interface-tooltip:hover ._user-interface-tooltiptext {
-        visibility: visible;
-        opacity: 1;
-      }`;
+      styles.textContent = ``;
       canvasContainer.appendChild(styles);
       canvasContainer.appendChild(div);
       div.style = 'overflow:"scroll';
@@ -423,12 +386,6 @@ const DOM = {
   copyFromText: val => {
     console.log(val);
     navigator.clipboard.writeText(val);
-  },
-  makeTooltip: defaultLabel => {
-    const tooltip = document.createElement('span');
-    tooltip.classList.add('_user-interface-tooltiptext');
-    tooltip.textContent = defaultLabel;
-    return tooltip;
   },
   makeButton: () => {
     const element = document.createElement('button');
@@ -606,6 +563,8 @@ const time = {
 export const STD = {
   void: VOID,
   VOID,
+  null: VOID,
+  NULL: VOID,
   tco:
     func =>
     (...args) => {
