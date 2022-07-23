@@ -228,14 +228,14 @@ export const droneIntel = icon => {
     icon.style.visibility = 'hidden';
   }, 500);
 };
-export const run = () => {
+export const run = (source = editor.getValue()) => {
   State.isErrored = false;
   consoleElement.classList.add('info_line');
   consoleElement.classList.remove('error_line');
 
   consoleElement.value = '';
   // const cursor = editor.getCursor();
-  const source = editor.getValue().trim();
+  source = source.trim();
   const sourceCode = removeNoCode(source);
   State.list = depResolution(sourceCode);
   const parenMatcher = isBalancedParenthesis(sourceCode);

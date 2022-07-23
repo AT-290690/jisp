@@ -58,6 +58,31 @@ const object = {
   // get: (entity, prop) => entity[prop] ?? VOID
 };
 const array = {
+  ["map'"]: (entity, callback) => entity.map(x => callback(x)),
+  ["map''"]: (entity, callback) => entity.map((x, i) => callback(x, i)),
+  ["map'''"]: (entity, callback) => entity.map((x, i, a) => callback(x, i, a)),
+  ["filter'"]: (entity, callback) => entity.filter(x => callback(x)),
+  ["filter''"]: (entity, callback) => entity.filter((x, i) => callback(x, i)),
+  ["filter'''"]: (entity, callback) =>
+    entity.filter((x, i, a) => callback(x, i, a)),
+  ["reduce'"]: (entity, callback, acc) =>
+    entity.reduce(acc => callback(acc), acc),
+  ["reduce''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x) => callback(acc, x), acc),
+  ["reduce'''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x, i) => callback(acc, x, i), acc),
+  ["reduce''''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x, i, a) => callback(acc, x, i, a), acc),
+  ["find'"]: (entity, callback) => entity.find(x => callback(x)),
+  ["find''"]: (entity, callback) => entity.find((x, i) => callback(x, i)),
+  ["find'''"]: (entity, callback) =>
+    entity.find((x, i, a) => callback(x, i, a)),
+  ["some'"]: (entity, callback) => entity.some(x => callback(x)),
+  ["some''"]: (entity, callback) => entity.some((x, i) => callback(x, i)),
+  ["some'''"]: (entity, callback) => entity.some((x, i) => callback(x, i, a)),
+  ["every'"]: (entity, callback) => entity.every(x => callback(x)),
+  ["every''"]: (entity, callback) => entity.every((x, i) => callback(x, i)),
+  ["every'''"]: (entity, callback) => entity.every((x, i) => callback(x, i, a)),
   makeArray: (...items) => items,
   makeMatrix: (...dimensions) => {
     if (dimensions.length > 0) {
@@ -669,6 +694,39 @@ const request = {
       .catch(err => callback(VOID, err))
 };
 const HL = {
+  ["remake'"]: (entity, callback) =>
+    entity.reduce(acc => callback(acc), new HyperList()),
+  ["remake''"]: (entity, callback) =>
+    entity.reduce((acc, x) => callback(acc, x), new HyperList()),
+  ["remake'''"]: (entity, callback) =>
+    entity.reduce((acc, x, i) => callback(acc, x, i), new HyperList()),
+  ["remake''''"]: (entity, callback) =>
+    entity.reduce((acc, x, i, a) => callback(acc, x, i, a), new HyperList()),
+  ["map'"]: (entity, callback) => entity.map(x => callback(x)),
+  ["map''"]: (entity, callback) => entity.map((x, i) => callback(x, i)),
+  ["map'''"]: (entity, callback) => entity.map((x, i, a) => callback(x, i, a)),
+  ["filter'"]: (entity, callback) => entity.filter(x => callback(x)),
+  ["filter''"]: (entity, callback) => entity.filter((x, i) => callback(x, i)),
+  ["filter'''"]: (entity, callback) =>
+    entity.filter((x, i, a) => callback(x, i, a)),
+  ["reduce'"]: (entity, callback, acc) =>
+    entity.reduce(acc => callback(acc), acc),
+  ["reduce''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x) => callback(acc, x), acc),
+  ["reduce'''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x, i) => callback(acc, x, i), acc),
+  ["reduce''''"]: (entity, callback, acc) =>
+    entity.reduce((acc, x, i, a) => callback(acc, x, i, a), acc),
+  ["find'"]: (entity, callback) => entity.find(x => callback(x)),
+  ["find''"]: (entity, callback) => entity.find((x, i) => callback(x, i)),
+  ["find'''"]: (entity, callback) =>
+    entity.find((x, i, a) => callback(x, i, a)),
+  ["some'"]: (entity, callback) => entity.some(x => callback(x)),
+  ["some''"]: (entity, callback) => entity.some((x, i) => callback(x, i)),
+  ["some'''"]: (entity, callback) => entity.some((x, i) => callback(x, i, a)),
+  ["every'"]: (entity, callback) => entity.every(x => callback(x)),
+  ["every''"]: (entity, callback) => entity.every((x, i) => callback(x, i)),
+  ["every'''"]: (entity, callback) => entity.every((x, i) => callback(x, i, a)),
   sizeOf: entity => entity.size,
   clone: entity =>
     HyperList.isHyperList(entity)

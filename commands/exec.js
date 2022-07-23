@@ -10,7 +10,8 @@ import {
   STD,
   editorResizerElement,
   consoleResizerElement,
-  store
+  store,
+  deps
 } from '../extentions/extentions.js';
 import { editor } from '../main.js';
 import { compileToJavaScript } from '../core/compiler.js';
@@ -627,50 +628,16 @@ export const execute = async CONSOLE => {
     case 'IMPORT':
       {
         const lib = PARAMS[0].toUpperCase();
-        const pack = PARAMS[1]?.toUpperCase();
         let match = true;
-        switch (lib) {
-          case 'MATH':
-            if (pack === 'ALL') {
-              editor.setValue(
-                '<- [add; sub; mult; pow; mod; divide; sign; trunc; exp; floor; round; random; dice; max; min; sin;  cos;  tan; atan; atan2; log10; log2; log; sum;  minInt; maxInt; infinity; PI; parseInt] ["MATH"];\n' +
-                  editor.getValue()
-              );
-            } else if (pack === 'TRIG') {
-              editor.setValue(
-                '<- [sin;  cos;  tan; atan; atan2] ["MATH"];\n' +
-                  editor.getValue()
-              );
-            } else {
-              editor.setValue(
-                '<- [PI; max; min; floor; round; dice; random; infinity; sin; cos; mod] ["MATH"];\n' +
-                  editor.getValue()
-              );
-            }
-            break;
-          case 'DOM':
-            editor.setValue(
-              `<- [makeUserInterface; makeInput; makeStyleTag; makeClass; makeTextArea; makeSlider; copyFromElement; copyFromText; makeTooltip; makeButton; makeLabel; onChange; onClick; makeParagraph; makeSpan; makeStyle; makeContainer; addClass; insertIntoContainer; removeSelfFromContainer] ["DOM"];\n` +
-                editor.getValue()
-            );
-            break;
-          case 'ARRAY':
-            if (pack === 'ALL') {
-              editor.setValue(
-                '<- [map; filter; reduce; range; reverse; push; pop; shift; unshift; flat; flatMap; find; findIndex; includes; every; some; isArray; from] ["ARRAY"];\n' +
-                  editor.getValue()
-              );
-            } else {
-              editor.setValue(
-                '<- [map; filter; reduce; range; reverse; push; pop; shift; unshift; flat; flatMap; find; findIndex; includes; every; some; isArray; from] ["ARRAY"];\n' +
-                  editor.getValue()
-              );
-            }
-            break;
-          default:
-            printErrors('Package ' + lib + ' does not exist!');
-            match = false;
-            break;
+        if (deps[lib]) {
+          editor.setValue(
+            `<- [${Object.keys(deps[lib]).join(
+              '; '
+            )}] ["${lib}"];\n${editor.getValue()}`
+          );
+        } else {
+          printErrors('Package ' + lib + ' does not exist!');
+          match = false;
         }
         if (match) consoleElement.value = '';
       }
