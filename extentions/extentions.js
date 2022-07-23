@@ -44,6 +44,7 @@ export const print = function (...values) {
 };
 
 const object = {
+  clone: obj => structuredClone(obj),
   has: (obj, ...props) => +props.every(x => x in obj),
   keys: obj => Object.keys(obj),
   values: obj => Object.values(obj),
@@ -442,10 +443,15 @@ const DOM = {
     element.classList.add('_user-interface-span');
     return element;
   },
+  makeCanvas: () => {
+    const element = document.createElement('canvas');
+    return element;
+  },
   makeStyle: (element, style) => {
     element.style = style;
     return element;
   },
+
   makeContainer: (...elements) => {
     const div = document.createElement('div');
     elements.forEach(element => div.appendChild(element));
@@ -533,7 +539,8 @@ const SetCollection = {
   remove: (entity, ...values) => {
     values.forEach(x => entity.delete(x));
   },
-  inside: (entity, callback) => entity.forEach((x, i, a) => callback(x)),
+  inside: (entity, callback) =>
+    entity.forEach((x, i, a) => callback(x)) ?? entity,
   union: (a, b) => {
     const out = new Set();
     a.forEach(item => out.add(item));
@@ -824,7 +831,7 @@ const HL = {
     entity.forEach((x, i) => fn(x, i));
     return entity;
   },
-  inside: (entity, fn) => entity.forEach(x => fn(x)),
+  inside: (entity, fn) => entity.forEach(x => fn(x)) ?? entity,
   each: (entity, fn) => {
     entity.forEach(fn);
     return entity;

@@ -41,6 +41,16 @@ export const parsePath = (arg, env) => {
   return path ? path.split(';').map(x => x.trim()) : VOID;
 };
 const tokens = {
+  // ["'"]: (args, env) => {},
+  // ['`']: (args, env) => {
+  //   if (args.length <= 1) {
+  //     printErrors('SyntaxError Invalid number of arguments to `', args);
+  //     throw new SyntaxError('Invalid number of arguments to `');
+  //   }
+  //   const caller = evaluate(args[0], env);
+  //   const fn = caller[evaluate(args[1], env)];
+  //   return fn.bind(caller);
+  // },
   ['?']: (args, env) => {
     if (args.length > 3 || args.length <= 1) {
       printErrors('SyntaxError Invalid number of arguments to ?', args);
@@ -432,20 +442,36 @@ const tokens = {
         env
       );
     }
+    // if (args[0].type === 'apply') {
+    //   const caller = evaluate(args[0], env);
+    //   const fn = caller[evaluate(args[1], env)];
+    //   return fn.bind(caller);
+    // }
 
     const entityName = args[0].name;
 
     for (let scope = env; scope; scope = Object.getPrototypeOf(scope)) {
       if (Object.prototype.hasOwnProperty.call(scope, entityName)) {
         if (prop.length === 1) {
-          return scope[entityName][prop[0]] ?? VOID;
+          const entityProperty = scope[entityName][prop[0]];
+          if (typeof entityProperty === 'function') {
+            const caller = scope[entityName];
+            const fn = entityProperty;
+            return fn.bind(caller);
+          } else return entityProperty ?? VOID;
         } else {
           let temp = scope[entityName];
           const last = prop.pop();
           prop.forEach(item => {
             temp = temp[item];
           });
-          return temp[last] ?? VOID;
+
+          const entityProperty = temp[last];
+          if (typeof entityProperty === 'function') {
+            const caller = temp;
+            const fn = entityProperty;
+            return fn.bind(caller);
+          } else return entityProperty ?? VOID;
         }
       }
     }

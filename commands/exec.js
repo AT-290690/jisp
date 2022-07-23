@@ -750,6 +750,7 @@ Upload your creations and share them with everyone!`;
       break;
     case 'C':
     case 'COMPILE':
+      State.stashedValue = editor.getValue();
       editor.setValue(await execute({ value: '_COMPILE' }));
       break;
     case 'JS':
@@ -779,7 +780,7 @@ Upload your creations and share them with everyone!`;
       break;
     case '_COMPILE':
       {
-        const source = removeNoCode(editor.getValue());
+        const source = removeNoCode(State.stashedValue);
         const List = depResolution(source);
         const { AST, env } = cell(
           protolessModule({ ...STD, ...List }),
@@ -836,7 +837,19 @@ ${tco}\n${pipe}\n${curry}\n${spread}\n${is_equal}\n
       }
       break;
     case 'BUILD':
+      if (!PARAMS.length) State.stashedValue = localStorage.getItem('stash');
+      PARAMS.forEach(file => {
+        let current = localStorage.getItem(file)?.trim();
+        if (current) {
+          if (current[current.length - 1] === ';') {
+            current = current.substring(0, current.length - 1);
+          }
+          State.stashedValue =
+            localStorage.getItem(file) + ';' + State.stashedValue;
+        }
+      });
       const a = document.createElement('a');
+
       a.href = window.URL.createObjectURL(
         new Blob([await execute({ value: '_COMPILE' })], {
           type: 'text/html'

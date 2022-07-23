@@ -41,43 +41,20 @@ const pipeArgs = expr => {
 
   expr.args = [
     first,
-    ...rest.map(arg => {
-      if (arg.operator.name === '|=') {
-        const fn = {
-          args: [
-            {
-              name: '$*',
-              type: 'word'
-            },
-            arg.args[0]
-          ],
+    ...rest.map(arg => ({
+      args: [
+        { type: 'word', name: '$*' },
+        {
+          args: [{ type: 'word', name: '$*' }, ...(arg.args ?? [])],
           class: 'function',
           type: 'apply',
-          operator: { name: '->', type: 'word' }
-        };
-        return {
-          args: [fn],
-          class: 'function',
-          type: 'apply',
-          operator: { type: 'word', name: ':' }
-        };
-      } else {
-        return {
-          args: [
-            { type: 'word', name: '$*' },
-            {
-              args: [{ type: 'word', name: '$*' }, ...(arg.args ?? [])],
-              class: 'function',
-              type: 'apply',
-              operator: { name: arg.operator.name.substring(1), type: 'word' }
-            }
-          ],
-          class: 'function',
-          type: 'apply',
-          operator: { name: '->', type: 'word' }
-        };
-      }
-    })
+          operator: { name: arg.operator.name.substring(1), type: 'word' }
+        }
+      ],
+      class: 'function',
+      type: 'apply',
+      operator: { name: '->', type: 'word' }
+    }))
   ];
 };
 
